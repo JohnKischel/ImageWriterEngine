@@ -2,6 +2,7 @@ function Start-ImageWriterEngine {
     [CmdletBinding()]
     param (
         [Parameter()]
+        [ValidateNotNullorEmpty()]
         [String]
         $ImagePath,
 
