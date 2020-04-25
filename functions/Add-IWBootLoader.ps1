@@ -8,8 +8,8 @@ function Add-IWBootLoader {
     )
 
     begin {
-        $ErrorActionPreference = "Stop"
-        $mountPath = ([System.IO.Directory]::CreateDirectory(("{0}\..\mounts" -f $PSScriptRoot))).Fullname
+        $mountPath = Join-Path -Path $env:TEMP -ChildPath (New-Guid).Guid
+        [System.IO.Directory]::CreateDirectory($mountPath)
         $storePath = Join-Path -Path "$mountPath\EFI" -ChildPath "Microsoft\Boot"
 
         $EfiSystemPartition = Get-Disk | Where-Object { $_.BusType -eq 'USB' } | Get-Partition | Where-Object { $_.Type -eq 'System' }
@@ -17,8 +17,7 @@ function Add-IWBootLoader {
         try {
             Add-PartitionAccessPath -DiskNumber $EfiSystemPartition.Disknumber -PartitionNumber $EfiSystemPartition.PartitionNumber -AccessPath $mountPath
             [System.IO.Directory]::CreateDirectory($storePath)
-        }
-        catch {
+        } catch {
             $dismount = ("mountvol.exe {0} /D" -f $mountPath)
             Invoke-Expression -Command $dismount
         }
@@ -71,14 +70,12 @@ function Add-IWBootLoader {
     end { 
         try {
             Remove-PartitionAccessPath -DiskNumber $EfiSystemPartition.Disknumber -PartitionNumber $EfiSystemPartition.PartitionNumber -AccessPath $mountPath
-        }
-        catch {
+        } catch {
             Write-PSFMessage -Level Host -Message (("Could not Remove AccessPath: {0}" -f $mountPath)) -Tag "Bootloader"
-        }
-        finally{
+        } finally {
             $dismount = ("mountvol.exe {0} /D" -f $mountPath)
             Invoke-Expression -Command $dismount | Out-Null
-            Remove-Item -Path $mountPath -Force -Recurse |Out-Null
+            Remove-Item -Path $mountPath -Force -Recurse | Out-Null
         }
     }
 }
