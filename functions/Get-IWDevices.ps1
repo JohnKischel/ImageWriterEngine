@@ -2,6 +2,7 @@ function Get-IWDevices {
     # TODO: Make a selection enable the user to choose the device.
     try {
         $InputObject = Get-Disk | Where-Object { $_.BusType -eq 'USB' }
+        
         switch ($InputObject.Length) {
             0 {
                 Write-PSFMessage -Level Host -Message "No usbdevice found."

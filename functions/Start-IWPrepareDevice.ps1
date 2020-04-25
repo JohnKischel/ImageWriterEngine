@@ -11,7 +11,7 @@ function Start-IWPrepareDevice
     )
     begin
     {
-        if([String]::IsNullOrWhiteSpace($DriveLetter))
+        if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter))
         {
             $DriveLetter = $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString()
         }
