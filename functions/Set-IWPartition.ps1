@@ -35,7 +35,7 @@ function Set-IWPartition {
 
                 New-Partition -InputObject $InputObject -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows) -Size $Size -DriveLetter $DriveLetter -ErrorVariable Err -ErrorAction 0 | Out-Null
                 if ($Err[0]) {
-                    throw "Not enough capacity."
+                    Write-PSFMessage -Level Host -Message ("USBDevice does not offer enough capacity.")
                     exit                  
                 }
 
