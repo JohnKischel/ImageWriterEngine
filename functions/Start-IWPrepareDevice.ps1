@@ -5,10 +5,12 @@ function Start-IWPrepareDevice
         [Parameter(Mandatory, ValueFromPipeline)]
         $InputObject,
 
+        # This parameter represents the final DriveLetter after installing the Image.
         [Parameter()]
         [Char]
         $DriveLetter
     )
+    
     begin
     {
         if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter))
