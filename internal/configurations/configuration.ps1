@@ -16,6 +16,11 @@ Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Import.IndividualFiles' -Value 
 
 # custom
 
+# Partition settings
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.Windows' -Value '{ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}' -Description 'Predefined WindowsPartition GUID.'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.EFI' -Value '{c12a7328-f81f-11d2-ba4b-00a0c93ec93b}' -Description 'Predefined EFIPartition GUID'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.MSR' -Value '{e3c9e316-0b5c-4db8-817d-f92df00215ae}' -Description 'Predefined MSRPartition GUID.'
+
+# Pathes
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Log.Path' -Value (Join-PSFPath $env:LOCALAPPDATA -Child ImageWriterEngine) -Description 'ImageWriterEngine logpath to store errors and troubleshootingdata.'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Path' -Value (Join-PSFPath $env:LOCALAPPDATA -Child ImageWriterEngine ) -Description 'Path of the current ImageWriterSession'

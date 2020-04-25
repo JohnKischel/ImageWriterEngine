@@ -1,19 +1,27 @@
-function Set-IWHardwareDetection
-{
+function Set-IWHardwareDetection {
     param(
-        [Parameter(ParameterSetName="StartService")]
+        [Parameter(ParameterSetName = "StartService")]
         [switch]$Start,
 
-        [Parameter(ParameterSetName="StopService")]
+        [Parameter(ParameterSetName = "StopService")]
         [switch]$Stop
     )
-    $Service = Get-Service -Name "ShellHWDetection"
-    if($Start.IsPresent){
-        $message = $Service | Start-Service -PassThru
-        Write-PSFMessage -Level Host -Message $("Service {0}" -f $message.Status)
+    
+    begin {
+        $Service = Get-Service -Name "ShellHWDetection"
     }
-    if($Stop.IsPresent){
-        $message = $Service | Stop-Service -PassThru
-        Write-PSFMessage -Level Host -Message $("Service {0}" -f $message.Status)
+
+    process {
+        if ($Start.IsPresent) {
+            $message = $Service | Start-Service -PassThru
+        }
+        if ($Stop.IsPresent) {
+            $message = $Service | Stop-Service -PassThru
+        }
     }
+
+    end {
+        Write-PSFMessage -Level Host -Message $("Service {0}" -f $message.Status) 
+    }
+
 }
