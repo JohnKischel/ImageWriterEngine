@@ -1,17 +1,16 @@
 function Add-IWBootLoader {
     [CmdletBinding()]
     param (
-
         [Parameter()]
         [char]
         $DriveLetter
     )
 
     begin {
-        $mountPath = Join-Path -Path $env:TEMP -ChildPath (New-Guid).Guid
+        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Id' -Value (New-Guid).Guid -Description 'ImageWriteEngine sessionId'
+        $mountPath = Join-Path -Path (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -ChildPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)
         [System.IO.Directory]::CreateDirectory($mountPath)
         $storePath = Join-Path -Path "$mountPath\EFI" -ChildPath "Microsoft\Boot"
-
         $EfiSystemPartition = Get-Disk | Where-Object { $_.BusType -eq 'USB' } | Get-Partition | Where-Object { $_.Type -eq 'System' }
 
         try {
