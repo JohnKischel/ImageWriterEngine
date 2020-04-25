@@ -17,5 +17,6 @@ function Mount-IWImage
         Write-PSFMessage -Level Host -Message ("Could not mount Image: {0}" -f $ImagePath)       
     }
 
+    Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImage -Value $InputObject -Description "Mounted Image as object."
     return $InputObject
 }
