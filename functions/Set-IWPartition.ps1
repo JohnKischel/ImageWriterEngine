@@ -1,5 +1,4 @@
-function Set-IWPartition
-{
+function Set-IWPartition {
     param(
         #Input Object should be passed from Get-IWDevices
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -26,21 +25,16 @@ function Set-IWPartition
         [Switch]$EfiPartition
     )
 
-    begin
-    {
+    begin {
         Set-IWHardwareDetection -Stop
     }
 
-    process
-    {
-        switch ($PSCmdlet.ParameterSetName)
-        {
-            WindowsPartition 
-            {
+    process {
+        switch ($PSCmdlet.ParameterSetName) {
+            WindowsPartition {
 
                 New-Partition -InputObject $InputObject -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows) -Size $Size -DriveLetter $DriveLetter -ErrorVariable Err -ErrorAction 0 | Out-Null
-                if ($Err[0])
-                {
+                if ($Err[0]) {
                     throw "Not enough capacity."
                     exit                  
                 }
@@ -51,40 +45,30 @@ function Set-IWPartition
                 Write-PSFMessage -Level Host -Message ("Formatted Partition to [ NTFS ] and Label [ IWE ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR))
             }
     
-            MSRPartition 
-            {
-                try
-                {
+            MSRPartition {
+                try {
                     New-Partition -InputObject $InputObject -Size 128MB -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR) -IsActive:$false -IsHidden | Out-Null
                     Write-PSFMessage -Level Host -Message ("Set MSRPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR), $InputObject.FriendlyName, $InputObject.SerialNumber)
-                }
-                catch
-                {
+                } catch {
                     Write-PSFMessage -Level Host -Message $_.Exception.Message                    
                 }
             }
     
-            EfiPartition 
-            {
-                try
-                {
+            EfiPartition {
+                try {
                     New-Partition -InputObject $InputObject -Size 100MB -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.EFI) -IsActive:$false -IsHidden |`
                         Format-Volume -FileSystem 'FAT32' -NewFileSystemLabel 'System' -Confirm:$false | Out-Null
                     Write-PSFMessage -Level Host -Message ("Set EFIPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.EFI), $InputObject.FriendlyName, $InputObject.SerialNumber)
                     Write-PSFMessage -Level Host -Message ("Formatted Partition to [ FAT32 ] and Label [ System ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR))
             
-                }
-                catch
-                {
+                } catch {
                     Write-PSFMessage -Level Host -Message $_.Exception.Message     
                 }
             }
         }
     }
    
-    end
-    {
+    end {
         Set-IWHardwareDetection -Start
-        $ErrorActionPreference = "SilentlyContinue"
     }
 }
