@@ -24,18 +24,21 @@ function Start-ImageWriterEngine {
         try {
             $Device, $DriveLetter = Get-IWDevices | Start-IWPrepareDevice -DriveLetter $DriveLetter
             $Image = Mount-IWImage -ImagePath $ImagePath
-            Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /LOG:$logfile
+            Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /NP /LOG:$logfile
         } catch {
             Write-PSFMessage -Level Host -Message $_.Exception.Message
         }
+
+        Add-IWBootLoader -DriveLetter $DriveLetter
     }
 
     end {
+        <#
         $sessionPath = (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path)
-        if ($sessionPath) {
+        if (Test-Path $sessionPath) {
             Remove-Item -Path (Join-PSFPath $sessionPath -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)) -Force -Recurse
         }
-
+        #>
         do {
             $result = Dismount-DiskImage -ImagePath (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
         }until(!$result)
