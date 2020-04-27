@@ -14,7 +14,7 @@ function Set-IWPartition {
 
         # DriveLetter that will be assigned to the WindowsPartition.
         [Parameter(ParameterSetName = "WindowsPartition")]
-        [uint64]$Size = 20GB,
+        [uint64]$Size = 30GB,
 
         #Switch to create a Partition with predefined guid {e3c9e316-0b5c-4db8-817d-f92df00215ae}
         [Parameter(ParameterSetName = "MSRPartition")]
