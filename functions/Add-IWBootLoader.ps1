@@ -7,7 +7,6 @@ function Add-IWBootLoader {
     )
 
     begin {
-        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Id' -Value (New-Guid).Guid -Description 'ImageWriteEngine sessionId'
         $mountPath = Join-Path -Path (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -ChildPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)
         [System.IO.Directory]::CreateDirectory($mountPath)
         $storePath = Join-Path -Path "$mountPath\EFI" -ChildPath "Microsoft\Boot"
