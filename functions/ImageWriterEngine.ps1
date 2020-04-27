@@ -24,7 +24,7 @@ function Start-ImageWriterEngine {
         try {
             $Device, $DriveLetter = Get-IWDevices | Start-IWPrepareDevice -DriveLetter $DriveLetter
             $Image = Mount-IWImage -ImagePath $ImagePath
-            Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /NP /LOG:$logfile
+            Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /NP /LOG:$logfile | Out-Null
         } catch {
             Write-PSFMessage -Level Host -Message $_.Exception.Message
         }
