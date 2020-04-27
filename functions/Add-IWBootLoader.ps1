@@ -7,15 +7,16 @@ function Add-IWBootLoader {
     )
 
     begin {
-        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Id' -Value (New-Guid).Guid -Description 'ImageWriteEngine sessionId'
         $mountPath = Join-Path -Path (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -ChildPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)
-        [System.IO.Directory]::CreateDirectory($mountPath)
-        $storePath = Join-Path -Path "$mountPath\EFI" -ChildPath "Microsoft\Boot"
+        [System.IO.Directory]::CreateDirectory($mountPath) |Out-Null
+        $EFIFilePath = Join-Path -Path $mountPath -ChildPath "\EFI\Boot"
+        $storePath = Join-Path -Path $mountPath -ChildPath "EFI\Microsoft\Boot"
         $EfiSystemPartition = Get-Disk | Where-Object { $_.BusType -eq 'USB' } | Get-Partition | Where-Object { $_.Type -eq 'System' }
 
         try {
             Add-PartitionAccessPath -DiskNumber $EfiSystemPartition.Disknumber -PartitionNumber $EfiSystemPartition.PartitionNumber -AccessPath $mountPath
-            [System.IO.Directory]::CreateDirectory($storePath)
+            [System.IO.Directory]::CreateDirectory($EFIFilePath) |Out-Null
+            [System.IO.Directory]::CreateDirectory($storePath) |Out-Null
         } catch {
             $dismount = ("mountvol.exe {0} /D" -f $mountPath)
             Invoke-Expression -Command $dismount
@@ -64,6 +65,10 @@ function Add-IWBootLoader {
         bcdedit /store "$storePath\BCD" /set '{default}' winpe Yes | Out-Null
         bcdedit /store "$storePath\BCD" /set '{default}' ems Yes | Out-Null
         Write-PSFMessage -Level Host -Message ("path description, osdevice, systemroot, bootmenupolicy,detecthal,winpe,ems set.") -Tag "Bootloader"
+
+        # Copy EfiFile to EfiPartition
+        $logfile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path) -Child EFILog))
+        Robocopy ("{0}:\EFI\Boot\" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.DiskImage).DriveLetter) $EFIFilePath bootx64.efi /S /E /W:1 /R:2 /NP /LOG+:$logfile | Out-Null
     }
 
     end { 

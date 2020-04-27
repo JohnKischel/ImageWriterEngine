@@ -7,14 +7,16 @@ function Start-IWPrepareDevice
 
         # This parameter represents the final DriveLetter after installing the Image.
         [Parameter()]
+        [AllowEmptyString()]
         [Char]
         $DriveLetter
     )
     
     begin
     {
-        if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter))
+        if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter) -or $DriveLetter -eq '^')
         {
+            Write-PSFMessage -Level Host -Message ("Select DriveLetter automatically.")       
             $DriveLetter = $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString()
         }
     }
@@ -22,7 +24,7 @@ function Start-IWPrepareDevice
     process
     {
         $InputObject | Set-IWPartitionType
-        $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter 
+        $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter
         $InputObject | Set-IWPartition -MSRPartition
         $InputObject | Set-IWPartition -EfiPartition
     }
