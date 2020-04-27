@@ -15,23 +15,25 @@ function Start-ImageWriterEngine {
         $ErrorActionPreference = "STOP"
         Set-IWHardwareDetection -Stop
         [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
+        [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path))).FullName
+        $logfile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path) -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)))
+
     }
 
     process {
         try {
             $Device, $DriveLetter = Get-IWDevices | Start-IWPrepareDevice -DriveLetter $DriveLetter
             $Image = Mount-IWImage -ImagePath $ImagePath
-            Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /Log $(Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path)
+            Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /LOG:$logfile
         } catch {
             Write-PSFMessage -Level Host -Message $_.Exception.Message
         }
     }
 
     end {
-        # Dismount-DiskImage -InputObject (Get-PSFConfigValue -FullName ImageWriterEngine.Session.DiskImage)
         $sessionPath = (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path)
         if ($sessionPath) {
-            Remove-Item -Path (Join-Path $sessionPath -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)) -Force -Recurse
+            Remove-Item -Path (Join-PSFPath $sessionPath -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)) -Force -Recurse
         }
 
         do {
