@@ -1,7 +1,7 @@
 function Set-IWPartition {
     param(
         #Input Object should be passed from Get-IWDevices
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline,HelpMessage="Input Object requires a type of MSFT_Disk")]
         $InputObject,
 
         #Switch to create a Partition with predefined guid {ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}
@@ -26,7 +26,6 @@ function Set-IWPartition {
     )
 
     begin {
-        Set-IWHardwareDetection -Stop
     }
 
     process {
@@ -69,6 +68,5 @@ function Set-IWPartition {
     }
    
     end {
-        Set-IWHardwareDetection -Start
     }
 }
