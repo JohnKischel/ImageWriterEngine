@@ -1,0 +1,3 @@
+[submodule ".\\RequiredModules\\PSFramework"]
+	path = .\\RequiredModules\\PSFramework
+	url = https://github.com/PowershellFrameworkCollective/psframework.git
