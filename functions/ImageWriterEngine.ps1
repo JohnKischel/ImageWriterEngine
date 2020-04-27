@@ -21,7 +21,6 @@ function Start-ImageWriterEngine {
         try {
             $Device, $DriveLetter = Get-IWDevices | Start-IWPrepareDevice -DriveLetter $DriveLetter
             $Image = Mount-IWImage -ImagePath $ImagePath
-
             Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /Log $(Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path)
         } catch {
             Write-PSFMessage -Level Host -Message $_.Exception.Message
@@ -35,7 +34,7 @@ function Start-ImageWriterEngine {
             Remove-Item -Path (Join-Path $sessionPath -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)) -Force -Recurse
         }
 
-        do{
+        do {
             $result = Dismount-DiskImage -ImagePath (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
         }until(!$result)
 
@@ -43,4 +42,3 @@ function Start-ImageWriterEngine {
         $ErrorActionPreference = "Continue"
     }
 }
-
