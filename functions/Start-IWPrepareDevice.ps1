@@ -24,7 +24,7 @@ function Start-IWPrepareDevice
     process
     {
         $InputObject | Set-IWPartitionType
-        $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter 
+        $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter
         $InputObject | Set-IWPartition -MSRPartition
         $InputObject | Set-IWPartition -EfiPartition
     }
