@@ -39,7 +39,18 @@
 	# FormatsToProcess = @('xml\ImageWriterEngine.Format.ps1xml')
 	
 	# Functions to export from this module
-	FunctionsToExport = 'Start-ImageWriterEngine','Add-IWBootLoader'
+	FunctionsToExport = @(
+	'Start-ImageWriterEngine',
+	'Add-IWBootLoader',
+	"Compare-IWImage",
+	"Get-IWDevices",
+	"Mount-IWImage",
+	"Set-IWHardwareDetection",
+	"Set-IWPartition",
+	"Set-IWPartitionType",
+	"Start-IWImageTransfer",
+	"Start-IWPrepareDevice"
+	)
 	
 	# Cmdlets to export from this module
 	CmdletsToExport = ''
