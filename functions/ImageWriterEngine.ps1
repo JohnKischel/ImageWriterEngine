@@ -27,7 +27,7 @@ function Start-ImageWriterEngine
 
         Set-IWHardwareDetection -Stop
         [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
-        [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path))).FullName
+        [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path))).FullName | Out-Null
         $logfile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path) -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)))
 
     }

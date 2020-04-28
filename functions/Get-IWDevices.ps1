@@ -15,7 +15,7 @@ function Get-IWDevices {
             switch ($InputObject.Count) {
                 0 {
                     Write-PSFMessage -Level Host -Message "No usbdevice found."
-                    throw [System.Exception]::new("Missing usbdevice.")
+                    $errorvar = 1
                 }
                 1 {
                     Write-PSFMessage -Level Host -Message ("USB device with SerialNumber: {0} found." -f $InputObject.SerialNumber)
@@ -23,13 +23,15 @@ function Get-IWDevices {
                 }
                 default {
                     Write-PSFMessage -Level Host -Message "Multiple devices found!"
-                    throw [System.Exception]::new("Multiple devices found!")
+                    $errorvar = 1
                 }
             }
             
+            if($errorvar -eq 1){exit}
         }
         catch {
             Write-PSFMessage -Level Host -Message $_.Exception.Message
+            exit
         }
     }
 
