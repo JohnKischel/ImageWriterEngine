@@ -3,19 +3,19 @@
 	RootModule = 'ImageWriterEngine.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '1.0.0'
+	ModuleVersion = '0.1.0'
 	
 	# ID used to uniquely identify this module
 	GUID = '307f4397-8108-4952-b92c-d117d0918fad'
 	
 	# Author of this module
-	Author = 'john'
+	Author = 'johnKischel'
 	
 	# Company or vendor of this module
 	CompanyName = 'MyCompany'
 	
 	# Copyright statement for this module
-	Copyright = 'Copyright (c) 2020 john'
+	Copyright = 'Copyright (c) 2020 johnKischel'
 	
 	# Description of the functionality provided by this module
 	Description = 'Write an iso image to usb.'
