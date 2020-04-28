@@ -33,8 +33,10 @@ function Set-IWPartition {
             WindowsPartition {
 
                 New-Partition -InputObject $InputObject -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows) -Size $Size -DriveLetter $DriveLetter -ErrorVariable Err -ErrorAction 0 | Out-Null
+                # TODO: The requested access path is already in use. Activity ID: {9b627dcc-b5f4-4dc5-888d-5c9deb93f816}
                 if ($Err[0]) {
-                    Write-PSFMessage -Level Host -Message ("USBDevice does not offer enough capacity.")
+
+                    Write-PSFMessage -Level Host -Message ($err[0])
                     exit                  
                 }
 
