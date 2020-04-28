@@ -7,7 +7,7 @@ function Add-IWBootLoader {
     )
 
     begin {
-        $mountPath = Join-Path -Path (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -ChildPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)
+        $mountPath = Join-PSFPath -Path (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)
         [System.IO.Directory]::CreateDirectory($mountPath) |Out-Null
         $EFIFilePath = Join-Path -Path $mountPath -ChildPath "\EFI\Boot"
         $storePath = Join-Path -Path $mountPath -ChildPath "EFI\Microsoft\Boot"
