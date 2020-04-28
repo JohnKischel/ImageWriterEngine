@@ -2,4 +2,4 @@
 
 # Load the strings used in messages
 . Import-ModuleFile -Path "$($script:ModuleRoot)\internal\scripts\strings.ps1"
-Import-Module "$($script:ModuleRoot)\internal\RequiredModules\PSFramework\PSFramework\PSFramework.psd1" -Verbose
+Import-Module "$($script:ModuleRoot)\internal\lib\psframework\PSFramework.psd1"
