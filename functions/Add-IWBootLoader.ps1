@@ -68,7 +68,7 @@ function Add-IWBootLoader {
 
         # Copy EfiFile to EfiPartition
         $logfile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path) -Child EFILog))
-        Robocopy ("{0}:\EFI\Boot\" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.DiskImage).DriveLetter) $EFIFilePath bootx64.efi /S /E /W:1 /R:2 /NP /LOG+:$logfile | Out-Null
+        Robocopy ("{0}:\EFI\Boot\" -f $DriveLetter) $EFIFilePath bootx64.efi /S /E /W:1 /R:2 /NP /LOG+:$logfile | Out-Null
     }
 
     end { 
