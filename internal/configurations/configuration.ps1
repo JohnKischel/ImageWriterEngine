@@ -22,6 +22,8 @@ Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.EFI' -Value '{c12a732
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.MSR' -Value '{e3c9e316-0b5c-4db8-817d-f92df00215ae}' -Description 'Predefined MSRPartition GUID.'
 
 # Pathes
-Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Path' -Value (Join-PSFPath $env:LOCALAPPDATA -Child ImageWriterEngine) -Description 'Path of the current ImageWriterSession'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Path' -Value (Join-PSFPath $env:ProgramData -Child ImageWriterEngine) -Description 'Path of the current ImageWriterSession'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Id' -Value (New-Guid).Guid -Description 'ImageWriteEngine sessionId'
-Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Log.Path' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -Child "Log" ) -Description 'ImageWriterEngine logpath to store errors and troubleshootingdata.'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.CurrentSession' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id) ) -Description 'ImageWriteEngine sessionId'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "ISO" ) -Description 'store for isofiles'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.MountPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "mnt" ) -Description 'Folder wich mounts the EFIPartition.'
