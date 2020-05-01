@@ -49,7 +49,9 @@
 	"Set-IWPartition",
 	"Set-IWPartitionType",
 	"Start-IWImageTransfer",
-	"Start-IWPrepareDevice"
+	"Start-IWPrepareDevice",
+	"Get-IWDevicePartitions",
+	"Get-IWProgress"
 	)
 	
 	# Cmdlets to export from this module
