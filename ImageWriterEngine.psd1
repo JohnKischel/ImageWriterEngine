@@ -12,7 +12,7 @@
 	Author = 'johnKischel'
 	
 	# Company or vendor of this module
-	CompanyName = 'MyCompany'
+	CompanyName = 'johnkischel'
 	
 	# Copyright statement for this module
 	Copyright = 'Copyright (c) 2020 johnKischel'
@@ -26,8 +26,9 @@
 	# Modules that must be imported into the global environment prior to importing
 	# this module
 	RequiredModules = @(
-		@{ ModuleName='.\lib\psframework\PSFramework\PSFramework.psd1'; ModuleVersion='1.1.59'}
 	)
+
+	NestedModules = @(@{ModuleName=".\lib\psframework\PSFramework\PSFramework.psd1"; ModuleVersion="1.1.59"})
 	
 	# Assemblies that must be loaded prior to importing this module
 	# RequiredAssemblies = @('bin\ImageWriterEngine.dll')
