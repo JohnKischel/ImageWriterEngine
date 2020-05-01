@@ -31,6 +31,6 @@ function Start-IWPrepareDevice
 
     end 
     {
-        return $InputObject,$DriveLetter
+        return $DriveLetter
     }
 }

@@ -1,0 +1,1 @@
+Compress-Archive -Path $PSScriptRoot -DestinationPath $PSScriptRoot\ImageWriterEngine.zip

@@ -1,21 +1,21 @@
-﻿@{
+@{
 	# Script module or binary module file associated with this manifest
 	RootModule = 'ImageWriterEngine.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '1.0.0'
+	ModuleVersion = '0.1.0'
 	
 	# ID used to uniquely identify this module
 	GUID = '307f4397-8108-4952-b92c-d117d0918fad'
 	
 	# Author of this module
-	Author = 'john'
+	Author = 'johnKischel'
 	
 	# Company or vendor of this module
-	CompanyName = 'MyCompany'
+	CompanyName = 'johnkischel'
 	
 	# Copyright statement for this module
-	Copyright = 'Copyright (c) 2020 john'
+	Copyright = 'Copyright (c) 2020 johnKischel'
 	
 	# Description of the functionality provided by this module
 	Description = 'Write an iso image to usb.'
@@ -26,8 +26,9 @@
 	# Modules that must be imported into the global environment prior to importing
 	# this module
 	RequiredModules = @(
-		@{ ModuleName='PSFramework'; ModuleVersion='1.1.59' }
 	)
+
+	NestedModules = @(@{ModuleName=".\lib\psframework\PSFramework\PSFramework.psd1"; ModuleVersion="1.1.59"})
 	
 	# Assemblies that must be loaded prior to importing this module
 	# RequiredAssemblies = @('bin\ImageWriterEngine.dll')
@@ -39,7 +40,20 @@
 	# FormatsToProcess = @('xml\ImageWriterEngine.Format.ps1xml')
 	
 	# Functions to export from this module
-	FunctionsToExport = 'Start-ImageWriterEngine','Add-IWBootLoader'
+	FunctionsToExport = @(
+	'Start-ImageWriterEngine',
+	'Add-IWBootLoader',
+	"Compare-IWImage",
+	"Get-IWDevices",
+	"Mount-IWImage",
+	"Set-IWHardwareDetection",
+	"Set-IWPartition",
+	"Set-IWPartitionType",
+	"Start-IWImageTransfer",
+	"Start-IWPrepareDevice",
+	"Get-IWDevicePartitions",
+	"Get-IWProgress"
+	)
 	
 	# Cmdlets to export from this module
 	CmdletsToExport = ''

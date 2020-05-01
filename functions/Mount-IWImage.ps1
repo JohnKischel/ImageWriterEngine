@@ -3,11 +3,22 @@ function Mount-IWImage {
     [CmdletBinding()]
     param (
         [Parameter(HelpMessage="Path of the isofile.")]
+        [ValidateNotNullOrEmpty()]
         [string]
         $ImagePath
     )
 
-    begin {}
+    begin {
+        if (!($ImagePath -match ".+\.iso") -or !(Test-Path -Path $ImagePath))
+        {
+            $ImagePath = (Get-ChildItem -Path .\ISO\*.iso -ErrorAction 0).FullName
+            if ([String]::IsNullOrEmpty($ImagePath))
+            {
+                Write-PSFMessage -Level Host -Message "No ISO found."
+                exit
+            }
+        }	
+    }
     process {
         try {
             $InputObject = Get-DiskImage $ImagePath | Mount-DiskImage -StorageType ISO | Get-Volume

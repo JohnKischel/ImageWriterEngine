@@ -1,4 +1,5 @@
-﻿$script:ModuleRoot = $PSScriptRoot
+﻿#Requires -RunAsAdministrator
+$script:ModuleRoot = $PSScriptRoot
 $script:ModuleVersion = (Import-PowerShellDataFile -Path "$($script:ModuleRoot)\ImageWriterEngine.psd1").ModuleVersion
 
 # Detect whether at some level dotsourcing was enforced

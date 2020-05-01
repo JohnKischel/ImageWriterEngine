@@ -7,18 +7,17 @@ function Add-IWBootLoader {
     )
 
     begin {
-        $mountPath = Join-Path -Path (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -ChildPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id)
-        [System.IO.Directory]::CreateDirectory($mountPath) |Out-Null
-        $EFIFilePath = Join-Path -Path $mountPath -ChildPath "\EFI\Boot"
-        $storePath = Join-Path -Path $mountPath -ChildPath "EFI\Microsoft\Boot"
-        $EfiSystemPartition = Get-Disk | Where-Object { $_.BusType -eq 'USB' } | Get-Partition | Where-Object { $_.Type -eq 'System' }
+        [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.MountPath)) |Out-Null
+        $EFIFilePath = Join-Path -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -ChildPath "\EFI\Boot"
+        $storePath = Join-Path -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -ChildPath "EFI\Microsoft\Boot"
+        #$EfiSystemPartition = Get-Disk | Where-Object { $_.BusType -eq 'USB' } | Get-Partition | Where-Object { $_.Type -eq 'System' }
 
         try {
-            Add-PartitionAccessPath -DiskNumber $EfiSystemPartition.Disknumber -PartitionNumber $EfiSystemPartition.PartitionNumber -AccessPath $mountPath
+            Add-PartitionAccessPath -DiskNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber -PartitionNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber -AccessPath (Get-PSFConfigValue ImageWriterEngine.Session.MountPath)
             [System.IO.Directory]::CreateDirectory($EFIFilePath) |Out-Null
             [System.IO.Directory]::CreateDirectory($storePath) |Out-Null
         } catch {
-            $dismount = ("mountvol.exe {0} /D" -f $mountPath)
+            $dismount = ("mountvol.exe {0} /D" -f (Get-PSFConfigValue ImageWriterEngine.Session.MountPath))
             Invoke-Expression -Command $dismount
         }
     }
@@ -67,19 +66,19 @@ function Add-IWBootLoader {
         Write-PSFMessage -Level Host -Message ("path description, osdevice, systemroot, bootmenupolicy,detecthal,winpe,ems set.") -Tag "Bootloader"
 
         # Copy EfiFile to EfiPartition
-        $logfile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Log.Path) -Child EFILog))
-        Robocopy ("{0}:\EFI\Boot\" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.DiskImage).DriveLetter) $EFIFilePath bootx64.efi /S /E /W:1 /R:2 /NP /LOG+:$logfile | Out-Null
+        $logfile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath) -Child EFILog))
+        Robocopy ("{0}:\EFI\Boot\" -f $DriveLetter) $EFIFilePath bootx64.efi /S /E /W:1 /R:2 /NP /LOG+:$logfile | Out-Null
     }
 
     end { 
         try {
-            Remove-PartitionAccessPath -DiskNumber $EfiSystemPartition.Disknumber -PartitionNumber $EfiSystemPartition.PartitionNumber -AccessPath $mountPath
+            Remove-PartitionAccessPath -DiskNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber -PartitionNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber -AccessPath (Get-PSFConfigValue ImageWriterEngine.Session.MountPath)
         } catch {
-            Write-PSFMessage -Level Host -Message (("Could not Remove AccessPath: {0}" -f $mountPath)) -Tag "Bootloader"
+            Write-PSFMessage -Level Host -Message (("Could not Remove AccessPath: {0}" -f (Get-PSFConfigValue ImageWriterEngine.Session.MountPath))) -Tag "Bootloader"
         } finally {
-            $dismount = ("mountvol.exe {0} /D" -f $mountPath)
+            $dismount = ("mountvol.exe {0} /D" -f (Get-PSFConfigValue ImageWriterEngine.Session.MountPath))
             Invoke-Expression -Command $dismount | Out-Null
-            Remove-Item -Path $mountPath -Force -Recurse | Out-Null
+            Remove-Item -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Force -Recurse | Out-Null
         }
     }
 }

@@ -1,35 +1,33 @@
 
 function Get-IWDevices {
-    
+    param(
+        # Device DriveLetter
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [char]
+        $DriveLetter,
+
+        # Use this switch to ignore not everything except Removeable devices
+        [switch]
+        $Secure
+    )
     begin {
-        [array]$InputObject = $null
     }
     
     process { 
         
         try {
-            foreach ($device in (Get-Disk | Where-Object { $_.BusType -eq 'USB' })) {
-                $InputObject += $device; 
+            if($Secure.IsPresent){
+                # 1[System.IO.DriveInfo]::GetDrives() | Where-Object { $_.Name -eq "${DriveLetter}:\" -and $_.DriveType -eq "Removeable" }                
+                $InputObject = Get-Volume | Where-Object {$_.DriveLetter -eq $DriveLetter -and $_.DriveType -eq "Removable"} | Get-Partition | Get-Disk
+                return $InputObject                
             }
-            
-            switch ($InputObject.Count) {
-                0 {
-                    Write-PSFMessage -Level Host -Message "No usbdevice found."
-                    throw [System.Exception]::new("Missing usbdevice.")
-                }
-                1 {
-                    Write-PSFMessage -Level Host -Message ("USB device with SerialNumber: {0} found." -f $InputObject.SerialNumber)
-                    return $InputObject
-                }
-                default {
-                    Write-PSFMessage -Level Host -Message "Multiple devices found!"
-                    throw [System.Exception]::new("Multiple devices found!")
-                }
-            }
-            
+            $InputObject = Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk
+            return $InputObject
         }
         catch {
             Write-PSFMessage -Level Host -Message $_.Exception.Message
+            exit
         }
     }
 
