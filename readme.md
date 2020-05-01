@@ -1,26 +1,20 @@
 ﻿# ImageWriterEngine
 ## Make your usbdevice Bootable from CLI.
 
-The ImageWriterEngine enables you to make your usbdevice bootable with your selected WinPE-ISO form the commandline.
+The ImageWriterEngine enables you to make your usbdevice bootable with your selected *WinPE-ISO* from the commandline.
 
 ## How to install.
 ---
-- Download the latest release.
-- Expand the zip archive.
-- Open an administrative WindowsPowershell.
-- change the directory to ImageWriterEngine
-```
-.\install.ps1
-```
+- Download the latest release
+- Expand the zip archive and store the module in a valid powershellmodule path.
+> https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7
+
+or use
+
+> ```git clone https://github.com/JohnKischel/ImageWriterEngine.git --recurse-submodules```
 
 ## Easy to use.
----
->  Selects the DriveLetter automatically. (Requires only one usbdevice connected)
-```
-Start-ImageWriterEngine -ImagePath 'yourISOPath'
-```
-
-> With specified DriveLetter
 ```
 Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath'
 ```
+This command will prepare your device with all partitions needed. Copy your image and create the neccesary bootloader/bootmgr.
