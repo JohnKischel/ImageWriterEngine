@@ -3,7 +3,7 @@
 	RootModule = 'ImageWriterEngine.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '0.1.0'
+	ModuleVersion = '0.2.1'
 	
 	# ID used to uniquely identify this module
 	GUID = '307f4397-8108-4952-b92c-d117d0918fad'
