@@ -42,7 +42,6 @@
 	# Functions to export from this module
 	FunctionsToExport = @(
 	'Start-ImageWriterEngine',
-	'Add-IWBootLoader',
 	"Compare-IWImage",
 	"Get-IWDevices",
 	"Mount-IWImage",
@@ -53,6 +52,15 @@
 	"Start-IWPrepareDevice",
 	"Get-IWDevicePartitions",
 	"Get-IWProgress"
+
+	# Boot
+
+	"Add-IWBootloader"
+	"Add-IWRamdisk"
+	"Dismount-IWEFIPartition"
+	"Mount-IWEFIPartition"
+	"New-IWBootManager"
+	"Set-IWBootLoader"
 	)
 	
 	# Cmdlets to export from this module
