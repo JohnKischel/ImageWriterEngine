@@ -1,4 +1,4 @@
-﻿New-PSFLicense -Product 'ImageWriterEngine' -Manufacturer 'John Kischel' -ProductVersion $script:ModuleVersion -ProductType Module -Name MIT -Version "0.2.2" -Date (Get-Date "2020-03-18") -Text @"
+﻿New-PSFLicense -Product 'ImageWriterEngine' -Manufacturer 'John Kischel' -ProductVersion $script:ModuleVersion -ProductType Module -Name MIT -Version "0.3.2" -Date (Get-Date "2020-03-18") -Text @"
 
 Copyright (c) 2020 John Kischel
 
