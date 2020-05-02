@@ -13,6 +13,7 @@ function Add-IWBootLoader {
         #$EfiSystemPartition = Get-Disk | Where-Object { $_.BusType -eq 'USB' } | Get-Partition | Where-Object { $_.Type -eq 'System' }
 
         try {
+            Get-IWDevicePartitions -DriveLetter $DriveLetter
             Add-PartitionAccessPath -DiskNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber -PartitionNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber -AccessPath (Get-PSFConfigValue ImageWriterEngine.Session.MountPath)
             [System.IO.Directory]::CreateDirectory($EFIFilePath) |Out-Null
             [System.IO.Directory]::CreateDirectory($storePath) |Out-Null
