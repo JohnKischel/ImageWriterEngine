@@ -1,35 +1,39 @@
 @{
 	# Script module or binary module file associated with this manifest
-	RootModule = 'ImageWriterEngine.psm1'
+	RootModule        = 'ImageWriterEngine.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '0.3.2'
+	ModuleVersion     = '0.3.2'
 	
 	# ID used to uniquely identify this module
-	GUID = '307f4397-8108-4952-b92c-d117d0918fad'
+	GUID              = '307f4397-8108-4952-b92c-d117d0918fad'
 	
 	# Author of this module
-	Author = 'johnKischel'
+	Author            = 'johnKischel'
 	
 	# Company or vendor of this module
-	CompanyName = 'johnkischel'
+	CompanyName       = 'johnkischel'
 	
 	# Copyright statement for this module
-	Copyright = 'Copyright (c) 2020 johnKischel'
+	Copyright         = 'Copyright (c) 2020 johnKischel'
 	
 	# Description of the functionality provided by this module
-	Description = 'Write an iso image to usb.'
+	Description       = 'Write an iso image to usb.'
 	
 	# Minimum version of the Windows PowerShell engine required by this module
 	PowerShellVersion = '5.0'
 	
-	# Modules that must be imported into the global environment prior to importing
-	# this module
-	RequiredModules = @(
+	# Nested modules
+	NestedModules     = @(
+		@{ModuleName = ".\lib\psframework\PSFramework\PSFramework.psd1"; ModuleVersion = "1.1.59" }
 	)
 
-	NestedModules = @(@{ModuleName=".\lib\psframework\PSFramework\PSFramework.psd1"; ModuleVersion="1.1.59"})
-	
+	# Modules that must be imported into the global environment prior to importing
+	# this module
+	RequiredModules   = @(
+	#@{ModuleName = "PSFramework";ModuleVersion = "1.1.59" }	
+	)
+
 	# Assemblies that must be loaded prior to importing this module
 	# RequiredAssemblies = @('bin\ImageWriterEngine.dll')
 	
@@ -41,45 +45,45 @@
 	
 	# Functions to export from this module
 	FunctionsToExport = @(
-	'Start-ImageWriterEngine',
-	"Compare-IWImage",
-	"Get-IWDevices",
-	"Mount-IWImage",
-	"Set-IWHardwareDetection",
-	"Set-IWPartition",
-	"Set-IWPartitionType",
-	"Start-IWImageTransfer",
-	"Start-IWPrepareDevice",
-	"Get-IWDevicePartitions",
-	"Get-IWProgress"
+		'Start-ImageWriterEngine',
+		"Compare-IWImage",
+		"Get-IWDevices",
+		"Mount-IWImage",
+		"Set-IWHardwareDetection",
+		"Set-IWPartition",
+		"Set-IWPartitionType",
+		"Start-IWImageTransfer",
+		"Start-IWPrepareDevice",
+		"Get-IWDevicePartitions",
+		"Get-IWProgress"
 
-	# Boot
+		# Boot
 
-	"Add-IWBootloader"
-	"Add-IWRamdisk"
-	"Dismount-IWEFIPartition"
-	"Mount-IWEFIPartition"
-	"New-IWBootManager"
-	"Set-IWBootLoader"
+		"Add-IWBootloader"
+		"Add-IWRamdisk"
+		"Dismount-IWEFIPartition"
+		"Mount-IWEFIPartition"
+		"New-IWBootManager"
+		"Set-IWBootLoader"
 	)
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = ''
+	CmdletsToExport   = ''
 	
 	# Variables to export from this module
 	VariablesToExport = ''
 	
 	# Aliases to export from this module
-	AliasesToExport = ''
+	AliasesToExport   = ''
 	
 	# List of all modules packaged with this module
-	ModuleList = @()
+	ModuleList        = @(".\lib\psframework\PSFramework\PSFramework.psm1")
 	
 	# List of all files packaged with this module
-	FileList = @()
+	FileList          = @()
 	
 	# Private data to pass to the module specified in ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-	PrivateData = @{
+	PrivateData       = @{
 		
 		#Support for PowerShellGet galleries.
 		PSData = @{
