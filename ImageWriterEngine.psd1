@@ -55,8 +55,8 @@
 		"Start-IWImageTransfer",
 		"Start-IWPrepareDevice",
 		"Get-IWDevicePartitions",
-		"Get-IWProgress"
-
+		"Get-IWProgress",
+		"Add-IWEFIFile"
 		# Boot
 
 		"Add-IWBootloader"
