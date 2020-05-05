@@ -56,15 +56,18 @@
 		"Start-IWPrepareDevice",
 		"Get-IWDevicePartitions",
 		"Get-IWProgress",
-		"Add-IWEFIFile"
+		"Add-IWEFIFile",
 		# Boot
 
-		"Add-IWBootloader"
-		"Add-IWRamdisk"
-		"Dismount-IWEFIPartition"
-		"Mount-IWEFIPartition"
-		"New-IWBootManager"
-		"Set-IWBootLoader"
+		"Add-IWBootloader",
+		"Add-IWRamdisk",
+		"Dismount-IWEFIPartition",
+		"Mount-IWEFIPartition",
+		"New-IWBootManager",
+		"Set-IWBootLoader",
+		"Initialize-IWBootConfigurationData",
+		"Get-IWBootConfigurationData",
+		"Remove-IWBootConfigurationData"
 	)
 	
 	# Cmdlets to export from this module
