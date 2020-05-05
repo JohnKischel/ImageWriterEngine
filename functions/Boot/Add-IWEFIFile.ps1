@@ -15,7 +15,7 @@ function Add-IWEFIFile {
     }
     
     process {
-        Robocopy.exe ((Get-ChildItem -Path $DriveLetter -Filter 'bootx64.efi' -Recurse).DirectoryName) $EFIFilePath bootx64.efi /S /E /W:1 /R:2
+        Robocopy ("{0}:\Deploy\Boot\x64\EFI\Boot" -f $DriveLetter) $EFIFilePath bootx64.efi /S /E /W:1 /R:2
     }
     
     end {
