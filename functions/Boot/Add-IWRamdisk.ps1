@@ -11,7 +11,16 @@ function Add-IWRamdisk {
         $DriveLetter
     )
 
-    bcdedit /store $StorePath /create '{ramdiskoptions}' /d "ramdiskoption" | Out-Null
-    bcdedit /store $StorePath /set '{ramdiskoptions}' ramdisksdidevice partition="$DriveLetter`:" | Out-Null
-    bcdedit /store $StorePath /set '{ramdiskoptions}' ramdisksdipath \boot\boot.sdi | Out-Null
+    begin {
+        Mount-IWEFIPartition -DriveLetter $DriveLetter
+    }
+
+    process {
+        bcdedit /store $StorePath /create '{ramdiskoptions}' /d "ramdiskoption" | Out-Null
+        bcdedit /store $StorePath /set '{ramdiskoptions}' ramdisksdidevice partition="$DriveLetter`:" | Out-Null
+        bcdedit /store $StorePath /set '{ramdiskoptions}' ramdisksdipath \boot\boot.sdi | Out-Null
+    }
+    end {
+        Dismount-IWEFIPartition -DriveLetter $DriveLetter
+    }
 }
