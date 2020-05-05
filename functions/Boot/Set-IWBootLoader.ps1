@@ -6,7 +6,7 @@ function Set-IWBootloader {
         $DriveLetter,
 
         # Identifier guid of the bootloader.
-        [Parameter()]
+        [Parameter(ValueFromPipeline=$true)]
         [GUID]
         $Identifier,
 
