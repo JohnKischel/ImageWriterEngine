@@ -16,6 +16,9 @@ function Set-IWBootloader {
         $StorePath = "$(Get-PSFConfigValue ImageWriterEngine.Session.StorePath)\BCD"
     )
 
+    bcdedit /store $StorePath /set '{bootmgr}' default "{$Identifier}" | Out-Null
+    bcdedit /store $StorePath /set '{bootmgr}' displayorder "{$Identifier}" | Out-Null
+
     bcdedit /store $StorePath /set "{$Identifier}" device "ramdisk=[$DriveLetter`:]\Deploy\Boot\LiteTouchPE_x64.wim,{ramdiskoptions}" | Out-Null
     bcdedit /store $StorePath /set "{$Identifier}" path \windows\system32\boot\winload.efi | Out-Null
     bcdedit /store $StorePath /set "{$Identifier}" description  'Litetouch Boot [PE] (x64)' | Out-Null
