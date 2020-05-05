@@ -4,7 +4,11 @@ function Add-IWRamdisk {
     param (
         [Parameter()]
         [string]
-        $StorePath = "$(Get-PSFConfigValue ImageWriterEngine.Session.StorePath)\BCD"
+        $StorePath = "$(Get-PSFConfigValue ImageWriterEngine.Session.StorePath)\BCD",
+
+        [Parameter()]
+        [char]
+        $DriveLetter
     )
 
     bcdedit /store $StorePath /create '{ramdiskoptions}' /d "ramdiskoption" | Out-Null
