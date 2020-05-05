@@ -6,13 +6,17 @@ function Dismount-IWEFIPartition {
         $DriveLetter
     )
     
+    begin { }
 
-    try {
-        Get-IWDevicePartitions -DriveLetter $DriveLetter
-        Remove-PartitionAccessPath -DiskNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber -PartitionNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber -AccessPath (Get-PSFConfigValue ImageWriterEngine.Session.MountPath)
+    process {
+        try {
+            Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
+            Remove-PartitionAccessPath -DiskNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber -PartitionNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber -AccessPath (Get-PSFConfigValue ImageWriterEngine.Session.MountPath)
+        }
+        catch {
+            $dismount = ("mountvol.exe {0} /D" -f (Get-PSFConfigValue ImageWriterEngine.Session.MountPath))
+            Invoke-Expression -Command $dismount | Out-Null
+        }
     }
-    catch {
-        $dismount = ("mountvol.exe {0} /D" -f (Get-PSFConfigValue ImageWriterEngine.Session.MountPath))
-        Invoke-Expression -Command $dismount
-    }
+    end { }
 }
