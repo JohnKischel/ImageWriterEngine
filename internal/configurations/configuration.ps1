@@ -28,5 +28,5 @@ Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.CurrentSession' -Value 
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "ISO" ) -Description 'store for isofiles'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.MountPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "mnt" ) -Description 'Folder wich mounts the EFIPartition.'
 
-Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.StorePath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "\EFI\Boot") -Description 'Location of the BCD Store'
-Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.EFIPath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "EFI\Microsoft\Boot") -Description 'EFIFile destinationpath'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.EFIPath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "\EFI\Boot") -Description 'Location of the BCD Store'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.StorePath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "EFI\Microsoft\Boot") -Description 'EFIFile destinationpath'
