@@ -43,6 +43,7 @@ function Set-IWPartition {
                 Write-PSFMessage -Level Host -Message ("Set WindowsPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows), $InputObject.FriendlyName, $InputObject.SerialNumber)
                 Format-Volume -FileSystem 'NTFS' -NewFileSystemLabel 'IWE' -DriveLetter $DriveLetter  -Force | Out-Null
                 Write-PSFMessage -Level Host -Message ("Formatted Partition to [ NTFS ] and Label [ IWE ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR))
+                Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
             }
     
             MSRPartition {
