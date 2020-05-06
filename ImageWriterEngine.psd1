@@ -57,6 +57,8 @@
 		"Get-IWDevicePartitions",
 		"Get-IWProgress",
 		"Add-IWEFIFile",
+		"Dismount-IWImage",
+		'Copy-IWImage'
 		# Boot
 
 		"Add-IWBootloader",
