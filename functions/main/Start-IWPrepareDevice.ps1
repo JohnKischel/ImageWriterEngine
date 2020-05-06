@@ -2,8 +2,8 @@ function Start-IWPrepareDevice
 {
     param(
         # This InputObject should be passed from Get-IWDevices
-        [Parameter(Mandatory, ValueFromPipeline)]
-        $InputObject,
+        [Parameter(ValueFromPipeline)]
+        $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject),
 
         # This parameter represents the final DriveLetter after installing the Image.
         [Parameter()]

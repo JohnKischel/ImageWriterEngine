@@ -13,12 +13,10 @@ function Dismount-IWImage {
     process {
         do {
             # Cleanup mounted Disks
-            $result = Dismount-DiskImage -ImagePath (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
+            $result = Dismount-DiskImage -ImagePath $ImagePath
         }until(!$result)
     }
     end {
-        Write-PSFMEssage -Level Host -Message "Disk unmounted."
+        #Write-PSFMessage -Level Host -Message "Disk unmounted."
     }
-
-    
 }

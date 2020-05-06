@@ -4,21 +4,28 @@ function Initialize-IWBootConfigurationData {
         # Driveletter of the device that should be bootable.
         [Parameter()]
         [char]
-        $DriveLetter
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.Driveletter)
     )
     
     begin {
-        Mount-IWEFIPartition -DriveLetter $DriveLetter
+        #Mount-IWEFIPartition -DriveLetter $DriveLetter
+        Get-IWDevices -DriveLetter $DriveLetter
     }
     
     process {
         Add-IWEFIFile -DriveLetter $DriveLetter
-        New-IWBootManager
-        Add-IWRamdisk -DriveLetter 'F'
-        Add-IWBootLoader | Set-IWBootloader -DriveLetter $DriveLetter
+        Start-Sleep -Seconds 1
+        New-IWBootManager  -DriveLetter $DriveLetter
+        Start-Sleep -Seconds 1
+        Add-IWRamdisk -DriveLetter $DriveLetter
+        Start-Sleep -Seconds 1
+        $Identifier = Add-IWBootLoader -DriveLetter $DriveLetter
+        Start-Sleep -Seconds 1
+        Set-IWBootloader -DriveLetter $DriveLetter -Identifier $Identifier
+        Start-Sleep -Seconds 1
     }
     
     end {
-        Dismount-IWEFIPartition -DriveLetter $DriveLetter
+        #Dismount-IWEFIPartition -DriveLetter $DriveLetter
     }
 }

@@ -8,7 +8,7 @@ function Add-IWRamdisk {
 
         [Parameter()]
         [char]
-        $DriveLetter
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
     )
 
     begin {

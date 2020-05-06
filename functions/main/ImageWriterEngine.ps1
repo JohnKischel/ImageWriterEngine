@@ -11,38 +11,51 @@ function Start-ImageWriterEngine {
         $DriveLetter
     )
     begin {
-        $ErrorActionPreference ="STOP"       
-        # Remove jobs
-        Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force
-        Set-IWHardwareDetection -Stop
+
+        $ErrorActionPreference = "STOP"
+
+        #Create file folder structure.
         [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
-        [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath))).FullName | Out-Null
-        $logfile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath) -Child "Image.txt"))
+        [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath))) | Out-Null        
+        
+        Get-IWDevices -DriveLetter $DriveLetter
+        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DiskImagePath' -Value $ImagePath
+        
+        # Stop Hardware detection service.
+        Set-IWHardwareDetection -Stop
+
+        # Remove previous jobs.
+        Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force
     }
 
     process {
         try {
-            $Image = Mount-IWImage -ImagePath $ImagePath
+            #Mount Image and and prepare the device. If the device is already prepared this step skips.
+            Mount-IWImage
             if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
-                $DriveLetter = Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
+                $DriveLetter = Start-IWPrepareDevice
             }
             
-            # Copy image to device
-            Start-Job -ScriptBlock {
-                param($Image, $logfile, $DriveLetter)
-                Robocopy.exe $("{0}:\" -f $Image.DriveLetter) $("{0}:\" -f $DriveLetter) /S /E /W:1 /R:2 /NP /LOG:$logfile | Out-Null 
-            } -ArgumentList $Image, $logfile, $DriveLetter -Name ImageCopy | Out-Null
+            # Copy image to selected device.
+            Copy-IWImage
         }
         catch {
             Write-PSFMessage -Level Host -Message $_.Exception.Message
         }
-
+        
         do {
-            Get-IWProgress -DriveLetter $DriveLetter
-            Start-Sleep -Seconds 1
-        }while (!(Get-Job -Name "ImageCopy").State -eq "Completed")
-        # Mount EFIpartition, create store and copy EFIFile.
+            # Get-IWProgress -DriveLetter 
+            $Size = (Get-Volume $DriveLetter) | Select-Object Size, SizeRemaining
+            $output = ($Size.Size - $Size.SizeRemaining) / 1GB
+            if ($output -ne $lastoutput) {
+                Write-Host ("{0}" -f ($Size.Size - $Size.SizeRemaining) / 1GB)
+                Start-Sleep -Seconds 1
+                $lastoutput = $output
+            }
+        }while (-not ((Get-Job -Name "ImageCopy").State -eq "Completed"))
+        
         try {
+            # Write Bootmanager,Bootlader,Ramdisk and EFIfile to the EFI Partition.
             Initialize-IWBootConfigurationData -DriveLetter $DriveLetter
         }
         catch {
@@ -51,12 +64,14 @@ function Start-ImageWriterEngine {
     }
 
     end {
-        do {
-            # Cleanup mounted Disks
-            $result = Dismount-DiskImage -ImagePath (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
-        }until(!$result)
-        Get-Job -Name ImageCopy | Remove-Job -Force
+        # Dismount mounted ISO
+        Dismount-IWImage -ImagePath (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
+
+        # Start Hardware detection service.
         Set-IWHardwareDetection -Start
+
+        # Cleanup created jobs.
+        Get-Job -Name ImageCopy | Remove-Job -Force
         $ErrorActionPreference = "Continue"
     }
 }

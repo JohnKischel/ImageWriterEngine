@@ -2,7 +2,8 @@ function Get-IWDevicePartitions {
     param(
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        $DriveLetter
+        [char]
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
 
     )
     $Disknumber = (Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk).Number

@@ -3,7 +3,20 @@ function Dismount-IWEFIPartition {
     param (
         [Parameter()]
         [char]
-        $DriveLetter
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter),
+
+        # Path where the EFIpartition should be mounted
+        [Parameter()]
+        [string]
+        $MountPath = (Get-PSFConfigValue ImageWriterEngine.Session.MountPath),
+
+        [Parameter()]
+        [string]
+        $DiskNumber = (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber,
+
+        [Parameter()]
+        [string]
+        $PartitionNumber = (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber
     )
     
     begin { }
@@ -11,10 +24,10 @@ function Dismount-IWEFIPartition {
     process {
         try {
             Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
-            Remove-PartitionAccessPath -DiskNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber -PartitionNumber (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber -AccessPath (Get-PSFConfigValue ImageWriterEngine.Session.MountPath)
+            Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath
         }
         catch {
-            $dismount = ("mountvol.exe {0} /D" -f (Get-PSFConfigValue ImageWriterEngine.Session.MountPath))
+            $dismount = ("mountvol.exe {0} /D" -f $MountPath)
             Invoke-Expression -Command $dismount | Out-Null
         }
     }

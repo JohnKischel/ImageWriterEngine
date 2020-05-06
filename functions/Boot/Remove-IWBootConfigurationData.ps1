@@ -4,7 +4,7 @@ function Remove-IWBootConfigurationData {
         # Driveletter of the device that should be bootable.
         [Parameter()]
         [char]
-        $DriveLetter
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
     )
     
     begin {

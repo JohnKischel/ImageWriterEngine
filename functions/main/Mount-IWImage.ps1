@@ -5,7 +5,7 @@ function Mount-IWImage {
         [Parameter(HelpMessage="Path of the isofile.")]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ImagePath
+        $ImagePath = (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
     )
 
     begin {

@@ -3,7 +3,12 @@ function Get-IWBootConfigurationData {
     param (
         [Parameter()]
         [char]
-        $DriveLetter
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter),
+
+        [Parameter()]
+        [string]
+        $StorePath = (Get-PSFConfigValue ImageWriterEngine.Session.StorePath)
+
     )
     
     begin {
@@ -11,7 +16,7 @@ function Get-IWBootConfigurationData {
     }
     
     process {
-        return bcdedit.exe /store ("{0}\BCD" -f (Get-PSFConfigValue ImageWriterEngine.Session.StorePath)) /enum all /v
+        return bcdedit.exe /store ("{0}\BCD" -f $StorePath) /enum all /v
     }
     
     end {
