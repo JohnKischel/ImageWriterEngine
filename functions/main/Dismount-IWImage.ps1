@@ -8,7 +8,11 @@ function Dismount-IWImage {
         $ImagePath = (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
     )
 
-    begin {}
+    begin {
+        if (-not ($ImagePath -match ".+\.iso") -or -not (Test-Path -Path $ImagePath)) {
+            throw ("Path doesnt match '.+\.iso' or is not available.")
+        }
+    }
 
     process {
         do {
@@ -17,6 +21,6 @@ function Dismount-IWImage {
         }until(!$result)
     }
     end {
-        #Write-PSFMessage -Level Host -Message "Disk unmounted."
+        
     }
 }
