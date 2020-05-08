@@ -7,39 +7,38 @@ function Get-IWDevices {
         [char]
         $DriveLetter,
 
-        # Use this switch to ignore not everything except Removeable devices
+        # Use this switch to ignore everything except Removeable devices.
         [switch]
         $Secure
     )
+    
     begin {
+        if (-not (Test-Path -Path $("{0}:\" -f $DriveLetter))) {
+            throw ("{0}:\ was not found as path." -f $DriveLetter)
+        }  
     }
     
     process { 
-        
-        try {
-            if($Secure.IsPresent){
-                # [System.IO.DriveInfo]::GetDrives() | Where-Object { $_.Name -eq "${DriveLetter}:\" -and $_.DriveType -eq "Removeable" }                
-                $InputObject = Get-Volume | Where-Object {$_.DriveLetter -eq $DriveLetter -and $_.DriveType -eq "Removable"} | Get-Partition | Get-Disk
-                if($InputObject){
-                    Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
-                    Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
-                    return $InputObject               
-                }
-            }
-            $InputObject = Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk
-            if($InputObject){
+        if ($Secure.IsPresent) {
+            $InputObject = Get-Volume | Where-Object { $_.DriveLetter -eq $DriveLetter -and $_.DriveType -eq "Removable" } | Get-Partition | Get-Disk
+            if ($InputObject) {
                 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
                 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
                 return $InputObject               
             }
-            return $InputObject
         }
-        catch {
-            Write-PSFMessage -Level Host -Message $_.Exception.Message
-            exit
+        else {
+            $InputObject = Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk
+            if ($InputObject) {
+                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
+                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
+                return $InputObject               
+            }
+            else {
+                throw "Device not found."
+            }
         }
+            
     }
-
     end { }
-    
 }
