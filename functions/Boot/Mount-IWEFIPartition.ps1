@@ -20,13 +20,13 @@ function Mount-IWEFIPartition {
     begin {
 
         $PartitionType = (Get-Partition -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber).Type
-        if($PartitionType -ne 'System')
-        {
+        if ($PartitionType -ne 'System') {
             throw ("Partition type is {0} bit Type 'System' is expected." -f $PartitionType)
         }
 
-        Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
-        [System.IO.Directory]::CreateDirectory($MountPath) | Out-Null
+        if (-not (Test-Path $MountPath)) { [System.IO.Directory]::CreateDirectory($MountPath) | Out-Null }
+
+        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 1) {break}
     }
 
     process {
@@ -38,7 +38,8 @@ function Mount-IWEFIPartition {
             }
         }
         Write-PSFMessage -Level Host -Message ("Mounted EFIPartition to {0}" -f $MountPath)
+        Set-PSFConfig -FullName ImageWriterEngine.Session.isMounted -Value 1
     }
 
-end { }
+    end { }
 }   
