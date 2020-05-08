@@ -3,6 +3,7 @@ function Get-IWBootConfigurationData {
     param (
         [Parameter()]
         [char]
+        [ValidatePattern('[A-Za-z]')]
         $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter),
 
         [Parameter()]

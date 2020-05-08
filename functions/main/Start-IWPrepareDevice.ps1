@@ -3,13 +3,14 @@ function Start-IWPrepareDevice
     param(
         # This InputObject should be passed from Get-IWDevices
         [Parameter(ValueFromPipeline)]
-        $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject),
+        $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DevicePartitionInputObject),
 
         # This parameter represents the final DriveLetter after installing the Image.
         [Parameter()]
         [AllowEmptyString()]
+        [ValidatePattern('[A-Za-z]')]
         [Char]
-        $DriveLetter
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
     )
     
     begin
@@ -17,19 +18,21 @@ function Start-IWPrepareDevice
         if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter) -or $DriveLetter -eq '^')
         {
             $DriveLetter = $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString()
+            Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
         }
     }
 
     process
     {
         $InputObject | Set-IWPartitionType
-        $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter
+        $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter -Size ([uint64]((Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size) + 1GB)
         $InputObject | Set-IWPartition -MSRPartition
         $InputObject | Set-IWPartition -EfiPartition
     }
 
     end 
     {
+        Get-IWDevicePartitions -DriveLetter $DriveLetter
         return $DriveLetter
     }
 }

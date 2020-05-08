@@ -3,6 +3,7 @@ function Add-IWEFIFile {
     param (
         # Location where to look for bootx64.efi
         [char]
+        [ValidatePattern('[A-Za-z]')]
         $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter),
 
         # Destination of the EFIPartition and Path to place the efifile.

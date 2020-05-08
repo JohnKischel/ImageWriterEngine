@@ -4,7 +4,12 @@ function Remove-IWBootConfigurationData {
         # Driveletter of the device that should be bootable.
         [Parameter()]
         [char]
-        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
+        [ValidatePattern('[A-Za-z]')]
+        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter),
+        # Path to the BootConfigurationData
+        [Parameter()]
+        [string]
+        $StorePath = (Get-PSFConfigValue ImageWriterEngine.Session.StorePath)
     )
     
     begin {
@@ -12,7 +17,13 @@ function Remove-IWBootConfigurationData {
     }
     
     process {
-        Remove-Item -Path (Get-PSFConfigValue ImageWriterEngine.Session.StorePath) -Recurse -Force
+        try {
+            Remove-Item -Path $StorePath -Recurse -Force
+            Write-PSFMessage -Level Host -Message "BootConfigurationData deleted."
+        }
+        catch {
+            throw $_.Exception
+        }
     }
     
     end {

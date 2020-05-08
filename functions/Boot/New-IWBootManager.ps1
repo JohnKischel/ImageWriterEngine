@@ -2,7 +2,8 @@ function New-IWBootManager {
 
     param(
         [Parameter()]
-        [string]
+        [char]
+        [ValidatePattern('[A-Za-z]')]
         $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.Driveletter),
         # Location of the BootManager store
         [Parameter()]
@@ -11,7 +12,12 @@ function New-IWBootManager {
 
         [Parameter()]
         [string]
-        $EFIPath = (Get-PSFConfigValue ImageWriterEngine.Session.EFIPath)
+        $EFIPath = (Get-PSFConfigValue ImageWriterEngine.Session.EFIPath),
+
+        # Override switch to create a complete new store
+        [Parameter()]
+        [switch]
+        $Force
     )
     begin {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
@@ -21,6 +27,9 @@ function New-IWBootManager {
         if (-not ([System.IO.File]::Exists("$StorePath\BCD"))) {
             [System.IO.Directory]::CreateDirectory($StorePath) | Out-Null
             [System.IO.Directory]::CreateDirectory($EFIPath) | Out-Null
+        }
+        elseif($Force.IsPresent){
+            Remove-Item -Path "$StorePath\*" -Recurse -Force
         }
 
         bcdedit.exe /createstore "$StorePath\BCD" | Out-Null

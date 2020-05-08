@@ -12,11 +12,11 @@ function Dismount-IWEFIPartition {
 
         [Parameter()]
         [string]
-        $DiskNumber = (Get-PSFConfigValue ImageWriterEngine.Session.Device).Disknumber,
+        $DiskNumber = (Get-PSFConfigValue ImageWriterEngine.Session.DevicePartition).Disknumber,
 
         [Parameter()]
         [string]
-        $PartitionNumber = (Get-PSFConfigValue ImageWriterEngine.Session.Device).EFIPartitionNumber
+        $PartitionNumber = (Get-PSFConfigValue ImageWriterEngine.Session.DevicePartition).EFIPartitionNumber
     )
     
     begin { }

@@ -12,7 +12,7 @@ function Set-IWPartitionType
     {
         try
         {
-            Clear-Disk -RemoveData -Confirm:$false -InputObject $InputObject -RemoveOEM
+            Clear-Disk -RemoveData -Confirm:$true -InputObject $InputObject -RemoveOEM
             Write-PSFMessage -Level Host -Message ("Device {0} with serialnumber {1} cleaned." -f $InputObject.FriendlyName, $InputObject.SerialNumber)
         }
         catch

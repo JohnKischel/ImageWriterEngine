@@ -4,6 +4,7 @@ function Get-IWDevices {
         # Device DriveLetter
         [Parameter()]
         [ValidateNotNullOrEmpty()]
+        [ValidatePattern('[A-Za-z]')]
         [char]
         $DriveLetter,
 
@@ -22,23 +23,25 @@ function Get-IWDevices {
         if ($Secure.IsPresent) {
             $InputObject = Get-Volume | Where-Object { $_.DriveLetter -eq $DriveLetter -and $_.DriveType -eq "Removable" } | Get-Partition | Get-Disk
             if ($InputObject) {
-                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
-                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
                 return $InputObject               
+            }
+            else{
+                throw 'Object returned was null'
             }
         }
         else {
             $InputObject = Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk
             if ($InputObject) {
-                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
-                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
                 return $InputObject               
             }
             else {
-                throw "Device not found."
+                throw 'Object returned was null'
             }
         }
             
     }
-    end { }
+    end { 
+        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
+        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
+    }
 }

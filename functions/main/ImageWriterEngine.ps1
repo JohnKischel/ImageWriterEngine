@@ -7,6 +7,7 @@ function Start-ImageWriterEngine {
 
         [Parameter(HelpMessage = "Select your DriveLetter from A-Z. Format example: Valid(C,D,E) Not valid (C:\,D:\,E:\ or C:,D:,E:")]
         [ValidateNotNullOrEmpty()]
+        [ValidatePattern('[A-Za-z]')]
         [Char]
         $DriveLetter
     )
@@ -17,40 +18,48 @@ function Start-ImageWriterEngine {
         #Create file folder structure.
         [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
         [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath))) | Out-Null        
-        
-        Get-IWDevices -DriveLetter $DriveLetter
-        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DiskImagePath' -Value $ImagePath
-        
+
+        Set-PSFConfig -Name 'ImageWriterEngine.Session.DiskImagePath' -Value $ImagePath
+
         # Stop Hardware detection service.
         Set-IWHardwareDetection -Stop
-
+        
         # Remove previous jobs.
-        Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force
+        try {
+            Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force
+        }
+        catch {
+            'Tried to remove previous jobs.'
+        }
     }
 
     process {
-        try {
-            #Mount Image and and prepare the device. If the device is already prepared this step skips.
-            Mount-IWImage
-            if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
-                $DriveLetter = Start-IWPrepareDevice
-            }
+        Get-IWDevices -DriveLetter $DriveLetter | Out-Null
+        #Mount Image and and prepare the device. If the device is already prepared this step is skipped.
+        Mount-IWImage | Out-Null
+
+        # if the image size exceeds the drivesize an error is thrown.
+        if (-not ((Get-PSFConfigValue ImageWriterEngine.Session.DevicePartitionInputObject).Size -le (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
+            Dismount-IWImage
+            throw 'Insufficient Memory. More storage is needed.'
+        }
+
+        if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
+            $DriveLetter = Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
+        }
             
-            # Copy image to selected device.
-            Copy-IWImage
-        }
-        catch {
-            Write-PSFMessage -Level Host -Message $_.Exception.Message
-        }
+        # Copy image to selected device.
+        Copy-IWImage
+
         
         do {
-            # Get-IWProgress -DriveLetter 
             $Size = (Get-Volume $DriveLetter) | Select-Object Size, SizeRemaining
-            $output = ($Size.Size - $Size.SizeRemaining) / 1GB
-            if ($output -ne $lastoutput) {
-                Write-Host ("{0}" -f ($Size.Size - $Size.SizeRemaining) / 1GB)
+            $Output = ($Size.Size - $Size.SizeRemaining) / 1GB
+            if ($Output -ne $Lastoutput) {
+                # Get-IWProgress
+                Write-Host  ("{0} / {1}" -f $Output, $Size)
                 Start-Sleep -Seconds 1
-                $lastoutput = $output
+                $Lastoutput = $Output
             }
         }while (-not ((Get-Job -Name "ImageCopy").State -eq "Completed"))
         
@@ -63,6 +72,8 @@ function Start-ImageWriterEngine {
         }
     }
 
+
+
     end {
         # Dismount mounted ISO
         Dismount-IWImage -ImagePath (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
@@ -72,6 +83,9 @@ function Start-ImageWriterEngine {
 
         # Cleanup created jobs.
         Get-Job -Name ImageCopy | Remove-Job -Force
+
+        # Cleanup Session
+        Remove-Item -Path ("{0}\*" -f (Get-PSFConfigValue ImageWriterEngine.Session.Path)) -Force -Recurse -ErrorAction 0
         $ErrorActionPreference = "Continue"
     }
 }

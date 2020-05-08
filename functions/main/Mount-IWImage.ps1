@@ -43,7 +43,7 @@ function Mount-IWImage {
             Write-PSFMessage -Level Host -Message ("WinPE detected.")       
         }
         else {
-            throw [Exception]::new("ISO is not a WINPE.")
+            throw 'ISO is not a WINPE.'
         }
     }
     end { 

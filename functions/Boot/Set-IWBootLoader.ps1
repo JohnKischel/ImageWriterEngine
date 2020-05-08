@@ -2,11 +2,12 @@ function Set-IWBootloader {
     param (
         # Reference to the volumedriveletter wich the bootloader should boot from.
         [Parameter()]
+        [ValidatePattern('[A-Za-z]')]
         [char]
         $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.Driveletter),
 
         # Identifier guid of the bootloader.
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [GUID]
         $Identifier,
 
@@ -20,22 +21,28 @@ function Set-IWBootloader {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
 
-    process{
-    bcdedit /store "$StorePath\BCD" /set '{bootmgr}' default "{$Identifier}" | Out-Null
-    bcdedit /store "$StorePath\BCD" /set '{bootmgr}' displayorder "{$Identifier}" | Out-Null
+    process {
+        try {
+            bcdedit /store "$StorePath\BCD" /set '{bootmgr}' default "{$Identifier}" | Out-Null
+            bcdedit /store "$StorePath\BCD" /set '{bootmgr}' displayorder "{$Identifier}" | Out-Null
 
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" device "ramdisk=[$DriveLetter`:]\Deploy\Boot\LiteTouchPE_x64.wim,{ramdiskoptions}" | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" path \windows\system32\boot\winload.efi | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" description  'Litetouch Boot [PE] (x64)' | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" osdevice ramdisk="[$DriveLetter`:]\Deploy\Boot\LiteTouchPE_x64.wim,{ramdiskoptions}" | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" systemroot \Windows | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" bootmenupolicy Legacy | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" detecthal Yes | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" winpe Yes | Out-Null
-    bcdedit /store "$StorePath\BCD" /set "{$Identifier}" ems Yes | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" device "ramdisk=[$DriveLetter`:]\Deploy\Boot\LiteTouchPE_x64.wim,{ramdiskoptions}" | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" path \windows\system32\boot\winload.efi | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" description  'Litetouch Boot [PE] (x64)' | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" osdevice ramdisk="[$DriveLetter`:]\Deploy\Boot\LiteTouchPE_x64.wim,{ramdiskoptions}" | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" systemroot \Windows | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" bootmenupolicy Legacy | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" detecthal Yes | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" winpe Yes | Out-Null
+            bcdedit /store "$StorePath\BCD" /set "{$Identifier}" ems Yes | Out-Null
+            Write-PSFMessage -Level Host -Message ("Bootloader settings set.") -Tag "Bootloader"
+        }
+        catch {
+            throw $_.Exception
+        }
     }
 
-    end{
+    end {
         Dismount-IWEFIPartition -DriveLetter $DriveLetter
     }
 }
