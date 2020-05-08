@@ -25,23 +25,20 @@ function Start-ImageWriterEngine {
         Set-IWHardwareDetection -Stop
         
         # Remove previous jobs.
-        try {
-            Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force
-        }
-        catch {
-            'Tried to remove previous jobs.'
-        }
+        try { Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force } catch { 'Tried to remove previous jobs.' }
     }
 
     process {
-        Get-IWDevices -DriveLetter $DriveLetter | Out-Null
+        # Remove the -Secure to select other drives than usb.
+        Get-IWDevices -DriveLetter $DriveLetter -Secure | Out-Null
+
         #Mount Image and and prepare the device. If the device is already prepared this step is skipped.
         Mount-IWImage | Out-Null
 
         # if the image size exceeds the drivesize an error is thrown.
         if (-not ((Get-PSFConfigValue ImageWriterEngine.Session.DevicePartitionInputObject).Size -le (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
             Dismount-IWImage
-            throw 'Insufficient Memory. More storage is needed.'
+            throw 'Not enough available capacity.'
         }
 
         if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
