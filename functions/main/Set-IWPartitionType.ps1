@@ -12,7 +12,7 @@ function Set-IWPartitionType
     {
         try
         {
-            Clear-Disk -RemoveData -Confirm:$true -InputObject $InputObject -RemoveOEM
+            Clear-Disk -RemoveData -Confirm:$true -InputObject $InputObject -RemoveOEM -ErrorAction Stop
             Write-PSFMessage -Level Host -Message ("Device {0} with serialnumber {1} cleaned." -f $InputObject.FriendlyName, $InputObject.SerialNumber)
         }
         catch
@@ -22,7 +22,7 @@ function Set-IWPartitionType
         
         try
         {
-            Set-Disk -PartitionStyle GPT -InputObject $InputObject
+            Set-Disk -PartitionStyle GPT -InputObject $InputObject -ErrorAction Stop
             Write-PSFMessage -Level Host -Message ("Device {0} is now GPT" -f $InputObject.FriendlyName)
         }
         catch
