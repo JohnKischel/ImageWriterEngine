@@ -20,11 +20,10 @@ function Dismount-IWEFIPartition {
     )
     
     begin { 
-        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 0) {break}
     }
 
     process {
-
+        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 0) {break}
         $PartitionType = (Get-Partition -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber).Type
         if ($PartitionType -ne 'System') {
             throw ("Partition type is {0} bit Type 'System' is expected." -f $PartitionType)
