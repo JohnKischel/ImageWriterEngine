@@ -1,7 +1,7 @@
 function Set-IWPartition {
     param(
         #Input Object should be passed from Get-IWDevices
-        [Parameter(Mandatory, ValueFromPipeline,HelpMessage="Input Object requires a type of MSFT_Disk")]
+        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = "Input Object requires a type of MSFT_Disk")]
         $InputObject,
 
         #Switch to create a Partition with predefined guid {ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}
@@ -42,33 +42,27 @@ function Set-IWPartition {
                 Format-Volume -FileSystem 'NTFS' -NewFileSystemLabel 'IWE' -DriveLetter $DriveLetter  -Force | Out-Null
                 Write-PSFMessage -Level Host -Message ("Formatted Partition to [ NTFS ] and Label [ IWE ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR))
                 Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
+                break
             }
     
             MSRPartition {
                 try {
-                    New-Partition -InputObject $InputObject -Size 128MB -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR) -IsActive:$false -IsHidden -ErrorAction Stop| Out-Null
+                    New-Partition -InputObject $InputObject -Size 128MB -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR) -IsActive:$false -IsHidden -ErrorAction Stop | Out-Null
                     Write-PSFMessage -Level Host -Message ("Set MSRPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR), $InputObject.FriendlyName, $InputObject.SerialNumber)
-                } catch {
+                }
+                catch {
                     throw 'Could not create the MSR partition.'
                 }
+                break
             }
     
             EfiPartition {
-                try {
-                    try{
-                    New-Partition -InputObject $InputObject -Size 100MB -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.EFI) -IsActive:$false -IsHidden -ErrorAction Stop |`
-                        Format-Volume -FileSystem 'FAT32' -NewFileSystemLabel 'System' -Confirm:$false -ErrorAction Stop | Out-Null
-                    }
-                    catch{
-                        throw 'Could not create an EFIPartition.'
-                    }
-                    
-                    Write-PSFMessage -Level Host -Message ("Set EFIPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.EFI), $InputObject.FriendlyName, $InputObject.SerialNumber)
-                    Write-PSFMessage -Level Host -Message ("Formatted Partition to [ FAT32 ] and Label [ System ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR))
-            
-                } catch {
-                    Write-PSFMessage -Level Host -Message $_.Exception.Message     
-                }
+
+                New-Partition -InputObject $InputObject -Size 100MB -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.EFI) -IsActive:$false -IsHidden -ErrorAction Stop |`
+                    Format-Volume -FileSystem 'FAT32' -NewFileSystemLabel 'System' -Confirm:$false -ErrorAction Stop | Out-Null
+                Write-PSFMessage -Level Host -Message ("Set EFIPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.EFI), $InputObject.FriendlyName, $InputObject.SerialNumber)
+                Write-PSFMessage -Level Host -Message ("Formatted Partition to [ FAT32 ] and Label [ System ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR))
+                break
             }
         }
     }
