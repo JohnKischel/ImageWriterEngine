@@ -2,13 +2,14 @@
 function Get-IWDevices {
     param(
         # Device DriveLetter
-        [Parameter()]
+        [Parameter(ParameterSetName = "GetByDriveLetter")]
         [ValidateNotNullOrEmpty()]
         [ValidatePattern('[A-Za-z]')]
         [char]
         $DriveLetter,
 
         # Use this switch to ignore everything except Removeable devices.
+        [Parameter(ParameterSetName = "GetByDriveLetter")]
         [switch]
         $Secure
     )
