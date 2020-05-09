@@ -26,10 +26,10 @@ function Mount-IWEFIPartition {
 
         if (-not (Test-Path $MountPath)) { [System.IO.Directory]::CreateDirectory($MountPath) | Out-Null }
 
-        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 1) {break}
     }
 
     process {
+        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 1) {break}
         # Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
         if (-not (Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru -ErrorAction 0)) {
             Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru
