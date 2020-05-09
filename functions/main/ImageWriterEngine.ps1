@@ -36,28 +36,20 @@ function Start-ImageWriterEngine {
         Mount-IWImage | Out-Null
 
         # if the image size exceeds the drivesize an error is thrown.
-        if (-not ((Get-PSFConfigValue ImageWriterEngine.Session.DevicePartitionInputObject).Size -le (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
+        if (-not ((Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
             Dismount-IWImage
             throw 'Not enough available capacity.'
         }
 
         if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
-            $DriveLetter = Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
+            Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
         }
-            
         # Copy image to selected device.
         Copy-IWImage
 
         
         do {
-            $Size = (Get-Volume $DriveLetter) | Select-Object Size, SizeRemaining
-            $Output = ($Size.Size - $Size.SizeRemaining) / 1GB
-            if ($Output -ne $Lastoutput) {
-                # Get-IWProgress
-                Write-Host  ("{0} / {1}" -f $Output, $Size)
-                Start-Sleep -Seconds 1
-                $Lastoutput = $Output
-            }
+            Get-IWProgress
         }while (-not ((Get-Job -Name "ImageCopy").State -eq "Completed"))
         
         try {
@@ -68,8 +60,6 @@ function Start-ImageWriterEngine {
             $_.Exception
         }
     }
-
-
 
     end {
         # Dismount mounted ISO
