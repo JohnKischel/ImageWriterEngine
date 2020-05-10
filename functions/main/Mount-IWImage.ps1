@@ -9,10 +9,10 @@ function Mount-IWImage {
     )
 
     begin {
-        if([String]::IsNullOrEmpty($ImagePath)) {
+        if ([String]::IsNullOrEmpty($ImagePath)) {
             Write-PSFMessage -Level Host -Message "Searching for image locally."
             $ImagePath = (Get-ChildItem -Path (Join-PSFPath (Get-PSFConfigValue ImageWriterEngine.Session.Path) -Child "*.iso") -ErrorAction 0).FullName
-            if($ImagePath){
+            if ($ImagePath) {
                 Write-PSFMessage -Level Host -Message ("Image: {0} found." -f $ImagePath)
             }
         }
@@ -20,35 +20,41 @@ function Mount-IWImage {
         if (-not ($ImagePath -match ".+\.iso") -or -not (Test-Path -Path $ImagePath)) {
             throw ("Path doesnt match '.+\.iso' or is not available.")
         }
+
+        Dismount-IWImage -ImagePath $ImagePath
     }
     process {
         try {
-            $InputObject = Get-DiskImage $ImagePath -ErrorAction Stop | Mount-DiskImage -StorageType ISO | Get-Volume
+            $InputObject = Get-DiskImage $ImagePath | Mount-DiskImage -PassThru | Get-Volume
         }
         catch {
             throw "The file or directory is corrupted and unreadable."
         }
-        #       
-        if ($InputObject) {
+
+        if ($InputObject -and $InputObject.DriveLetter) {
             Write-PSFMessage -Level Host -Message ("Image: [ {0} ] mounted as [ {1}: ] with size [ {2:f2} ]" -f $InputObject.FileSystemLabel , $InputObject.DriveLetter, ($InputObject.Size / 1GB ))       
+            Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImage -Value $InputObject -Description "Mounted Image as object."
+            Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImagePath -Value $ImagePath -Description "ISO ImagePath"
         }
         else {
-            throw ("Could not mount Image: {0} the returning Object was null" -f $ImagePath )       
-        }
-        
-        Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImage -Value $InputObject -Description "Mounted Image as object."
-        Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImagePath -Value $ImagePath -Description "The path of the iso image."
+            Dismount-IWImage -ImagePath $ImagePath
+            $InputObject = Get-DiskImage $ImagePath | Mount-DiskImage -PassThru | Get-Volume
+            if (-not $InputObject -and -not $InputObject.DriveLetter) {
+                throw ("Could not mount Image the returning Object was null or no driveletter was assigned to. DriveLetter - {0} -" -f $InputObject.DriveLetter )       
 
-        if ([System.IO.File]::Exists(("{0}:\Deploy\Boot\LiteTouchPE_x64.wim" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.DiskImage).DriveLetter))) {
+            }
+        }
+    
+
+        if ([System.IO.File]::Exists(("{0}:\Deploy\Boot\LiteTouchPE_x64.wim" -f $InputObject.DriveLetter))) {
             Write-PSFMessage -Level Host -Message ("WinPE detected.")       
         }
         else {
             throw 'ISO is not a WINPE.'
         }
     }
+
     end { 
         return $InputObject
     }
-
-    
 }

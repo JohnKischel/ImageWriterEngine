@@ -2,13 +2,14 @@
 function Get-IWDevices {
     param(
         # Device DriveLetter
-        [Parameter()]
+        [Parameter(ParameterSetName = "GetByDriveLetter")]
         [ValidateNotNullOrEmpty()]
         [ValidatePattern('[A-Za-z]')]
         [char]
         $DriveLetter,
 
         # Use this switch to ignore everything except Removeable devices.
+        [Parameter(ParameterSetName = "GetByDriveLetter")]
         [switch]
         $Secure
     )
@@ -23,16 +24,16 @@ function Get-IWDevices {
         if ($Secure.IsPresent) {
             $InputObject = Get-Volume | Where-Object { $_.DriveLetter -eq $DriveLetter -and $_.DriveType -eq "Removable" } | Get-Partition | Get-Disk
             if ($InputObject) {
-                return $InputObject               
+                return $InputObject
             }
-            else{
+            else {
                 throw 'Object returned was null'
             }
         }
         else {
             $InputObject = Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk
             if ($InputObject) {
-                return $InputObject               
+                return $InputObject
             }
             else {
                 throw 'Object returned was null'

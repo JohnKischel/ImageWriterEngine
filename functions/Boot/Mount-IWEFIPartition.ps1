@@ -18,22 +18,28 @@ function Mount-IWEFIPartition {
     )
     
     begin {
-        Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
-        [System.IO.Directory]::CreateDirectory($MountPath) | Out-Null
+
+        $PartitionType = (Get-Partition -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber).Type
+        if ($PartitionType -ne 'System') {
+            throw ("Partition type is {0} bit Type 'System' is expected." -f $PartitionType)
+        }
+
+        if (-not (Test-Path $MountPath)) { [System.IO.Directory]::CreateDirectory($MountPath) | Out-Null }
+
     }
 
     process {
-
-        try {
-            # Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
-            Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath
+        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 1) {break}
+        # Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
+        if (-not (Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru -ErrorAction 0)) {
+            Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru
+            if ( -not (Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru -ErrorAction 0)) {
+                throw 'Could not mount EFIPartition.'
+            }
         }
-        catch {
-            $dismount = ("mountvol.exe {0} /D" -f $MountPath)
-            Invoke-Expression -Command $dismount | Out-Null
-        }
+        Write-PSFMessage -Level Host -Message ("Mounted EFIPartition to {0}" -f $MountPath)
+        Set-PSFConfig -FullName ImageWriterEngine.Session.isMounted -Value 1
     }
 
-    end {
-    }
+    end { }
 }   

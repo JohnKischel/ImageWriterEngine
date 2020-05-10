@@ -19,17 +19,28 @@ function Dismount-IWEFIPartition {
         $PartitionNumber = (Get-PSFConfigValue ImageWriterEngine.Session.DevicePartition).EFIPartitionNumber
     )
     
-    begin { }
+    begin { 
+    }
 
     process {
-        try {
-            Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
-            Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath
+        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 0) {break}
+        $PartitionType = (Get-Partition -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber).Type
+        if ($PartitionType -ne 'System') {
+            throw ("Partition type is {0} bit Type 'System' is expected." -f $PartitionType)
         }
-        catch {
-            $dismount = ("mountvol.exe {0} /D" -f $MountPath)
-            Invoke-Expression -Command $dismount | Out-Null
+
+        if (-not(Test-Path -Path $MountPath)) {
+            throw 'Path does not exist.'
+        }
+
+        if (-not (Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru -ErrorAction 0)) {
+            throw 'The access path is not valid or no volume is mounted.'
+        }
+        else {
+            Write-PSFMessage -Level Host -Message ("Dismounted EFIPartition.")
+            Set-PSFConfig -FullName ImageWriterEngine.Session.isMounted -Value 0
         }
     }
+
     end { }
 }

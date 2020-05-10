@@ -3,10 +3,10 @@ function Start-IWPrepareDevice
     param(
         # This InputObject should be passed from Get-IWDevices
         [Parameter(ValueFromPipeline)]
-        $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DevicePartitionInputObject),
+        $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject),
 
         # This parameter represents the final DriveLetter after installing the Image.
-        [Parameter()]
+        [Parameter(ValueFromPipeline)]
         [AllowEmptyString()]
         [ValidatePattern('[A-Za-z]')]
         [Char]
@@ -15,7 +15,7 @@ function Start-IWPrepareDevice
     
     begin
     {
-        if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter) -or $DriveLetter -eq '^')
+        if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter))
         {
             $DriveLetter = $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString()
             Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
@@ -33,6 +33,5 @@ function Start-IWPrepareDevice
     end 
     {
         Get-IWDevicePartitions -DriveLetter $DriveLetter
-        return $DriveLetter
     }
 }

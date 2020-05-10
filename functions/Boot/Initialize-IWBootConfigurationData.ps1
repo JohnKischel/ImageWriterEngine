@@ -9,7 +9,6 @@ function Initialize-IWBootConfigurationData {
     )
     
     begin {
-        #Mount-IWEFIPartition -DriveLetter $DriveLetter
         Get-IWDevices -DriveLetter $DriveLetter
         Get-IWDevicePartitions -DriveLetter $DriveLetter
     }
@@ -28,6 +27,5 @@ function Initialize-IWBootConfigurationData {
     }
     
     end {
-        #Dismount-IWEFIPartition -DriveLetter $DriveLetter
     }
 }

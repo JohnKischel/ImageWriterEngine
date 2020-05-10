@@ -25,42 +25,31 @@ function Start-ImageWriterEngine {
         Set-IWHardwareDetection -Stop
         
         # Remove previous jobs.
-        try {
-            Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force
-        }
-        catch {
-            'Tried to remove previous jobs.'
-        }
+        try { Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force } catch { 'Tried to remove previous jobs.' }
     }
 
     process {
-        Get-IWDevices -DriveLetter $DriveLetter | Out-Null
-        #Mount Image and and prepare the device. If the device is already prepared this step is skipped.
+        # Remove the -Secure to select other drives than usb.
+        Get-IWDevices -DriveLetter $DriveLetter -Secure | Out-Null
+
+        # Mount Image
         Mount-IWImage | Out-Null
 
         # if the image size exceeds the drivesize an error is thrown.
-        if (-not ((Get-PSFConfigValue ImageWriterEngine.Session.DevicePartitionInputObject).Size -le (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
+        if (-not ((Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
             Dismount-IWImage
-            throw 'Insufficient Memory. More storage is needed.'
+            throw 'Not enough available capacity.'
         }
 
         if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
-            $DriveLetter = Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
+            Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
         }
-            
         # Copy image to selected device.
         Copy-IWImage
 
         
         do {
-            $Size = (Get-Volume $DriveLetter) | Select-Object Size, SizeRemaining
-            $Output = ($Size.Size - $Size.SizeRemaining) / 1GB
-            if ($Output -ne $Lastoutput) {
-                # Get-IWProgress
-                Write-Host  ("{0} / {1}" -f $Output, $Size)
-                Start-Sleep -Seconds 1
-                $Lastoutput = $Output
-            }
+            Get-IWProgress
         }while (-not ((Get-Job -Name "ImageCopy").State -eq "Completed"))
         
         try {
@@ -71,8 +60,6 @@ function Start-ImageWriterEngine {
             $_.Exception
         }
     }
-
-
 
     end {
         # Dismount mounted ISO
