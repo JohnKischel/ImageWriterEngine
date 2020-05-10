@@ -32,7 +32,7 @@ function Start-ImageWriterEngine {
         # Remove the -Secure to select other drives than usb.
         Get-IWDevices -DriveLetter $DriveLetter -Secure | Out-Null
 
-        #Mount Image and and prepare the device. If the device is already prepared this step is skipped.
+        # Mount Image
         Mount-IWImage | Out-Null
 
         # if the image size exceeds the drivesize an error is thrown.
