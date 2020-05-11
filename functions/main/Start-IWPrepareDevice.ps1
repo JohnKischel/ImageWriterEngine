@@ -32,6 +32,6 @@ function Start-IWPrepareDevice
 
     end 
     {
-        Get-IWDevicePartitions -DriveLetter $DriveLetter
+        Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
     }
 }
