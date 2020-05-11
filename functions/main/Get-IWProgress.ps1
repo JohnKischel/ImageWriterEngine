@@ -17,7 +17,7 @@ function Get-IWProgress {
     }
     
     end {
-        Write-Host  ("{0} / {1}" -f $Output, ( ($Size.Size - 1GB )/1GB) )
+        Write-Host  ("{0} / {1}" -f $Output, ( ($Size.Size)/1GB) )
         Start-Sleep -Seconds 10
     }
 }
