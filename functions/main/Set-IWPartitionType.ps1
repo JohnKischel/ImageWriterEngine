@@ -10,7 +10,6 @@ function Set-IWPartitionType {
 
     process {
         try {
-            Write-PSFMessage -Level Host -Message ("InputObject was of type: {0}" -f ($InputObject).GetType())
             Clear-Disk -RemoveData -Confirm:$true -InputObject $InputObject -RemoveOEM -ErrorAction Stop
             Write-PSFMessage -Level Host -Message ("Device {0} with serialnumber {1} cleaned." -f $InputObject.FriendlyName, $InputObject.SerialNumber)
         }
