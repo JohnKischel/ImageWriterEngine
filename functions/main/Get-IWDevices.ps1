@@ -52,9 +52,6 @@ function Get-IWDevices {
                         throw 'Object returned was null'
                     }
                 }
-
-                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
-                Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
             }
 
             # List all volumes and disks.
@@ -65,6 +62,7 @@ function Get-IWDevices {
         }
     }
     end { 
-
+        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
+        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
     }
 }
