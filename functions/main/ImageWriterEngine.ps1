@@ -72,7 +72,7 @@ function Start-ImageWriterEngine {
         Get-Job -Name ImageCopy | Remove-Job -Force
 
         # Cleanup Session
-        Remove-Item -Path ("{0}\*" -f (Get-PSFConfigValue ImageWriterEngine.Session.Path)) -Force -Recurse -ErrorAction 0
+        # Remove-Item -Path ("{0}\*" -f (Get-PSFConfigValue ImageWriterEngine.Session.Path)) -Force -Recurse -ErrorAction 0
         $ErrorActionPreference = "Continue"
     }
 }
