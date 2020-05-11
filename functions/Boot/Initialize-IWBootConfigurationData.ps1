@@ -9,21 +9,20 @@ function Initialize-IWBootConfigurationData {
     )
     
     begin {
-        Get-IWDevices -DriveLetter $DriveLetter
-        Get-IWDevicePartitions -DriveLetter $DriveLetter
+        Get-IWDevices -DriveLetter $DriveLetter | Out-Null
+        Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
     }
     
     process {
         Add-IWEFIFile -DriveLetter $DriveLetter
-        Start-Sleep -Seconds 1
+
         New-IWBootManager  -DriveLetter $DriveLetter -Force
-        Start-Sleep -Seconds 1
+
         Add-IWRamdisk -DriveLetter $DriveLetter
-        Start-Sleep -Seconds 1
+ 
         $Identifier = Add-IWBootLoader -DriveLetter $DriveLetter
-        Start-Sleep -Seconds 1
+
         Set-IWBootloader -DriveLetter $DriveLetter -Identifier $Identifier
-        Start-Sleep -Seconds 1
     }
     
     end {
