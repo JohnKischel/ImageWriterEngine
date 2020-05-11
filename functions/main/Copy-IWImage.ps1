@@ -23,7 +23,7 @@ function Copy-IWImage {
     process {
         Start-Job -ScriptBlock {
             param($ImageDriveLetter, $LogFile, $DriveLetter)
-            Robocopy.exe $("{0}:\" -f $ImageDriveLetter) $("{0}:\" -f $DriveLetter) /S /E /XO /W:1 /R:2 /NP /LOG:$logfile | Out-Null 
+            Robocopy.exe $("{0}:\" -f $ImageDriveLetter) $("{0}:\" -f $DriveLetter) /S /E /MIR /W:1 /R:2 /NP /LOG:$logfile | Out-Null 
         } -ArgumentList $ImageDriveLetter, $LogFile, $DriveLetter -Name ImageCopy | Out-Null
 
         if($job = Get-Job -Name ImageCopy){
