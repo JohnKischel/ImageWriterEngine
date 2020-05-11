@@ -24,10 +24,10 @@ function Mount-IWImage {
         Dismount-IWImage -ImagePath $ImagePath
     }
     process {
+        
         try {
             $InputObject = Get-DiskImage $ImagePath | Mount-DiskImage -PassThru | Get-Volume
-        }
-        catch {
+        } catch {
             throw "The file or directory is corrupted and unreadable."
         }
 
@@ -35,10 +35,11 @@ function Mount-IWImage {
             Write-PSFMessage -Level Host -Message ("Image: [ {0} ] mounted as [ {1}: ] with size [ {2:f2} ]" -f $InputObject.FileSystemLabel , $InputObject.DriveLetter, ($InputObject.Size / 1GB ))       
             Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImage -Value $InputObject -Description "Mounted Image as object."
             Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImagePath -Value $ImagePath -Description "ISO ImagePath"
-        }
-        else {
+        } else {
             Dismount-IWImage -ImagePath $ImagePath
             $InputObject = Get-DiskImage $ImagePath | Mount-DiskImage -PassThru | Get-Volume
+            Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImage -Value $InputObject -Description "Mounted Image as object."
+            Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImagePath -Value $ImagePath -Description "ISO ImagePath"
             if (-not $InputObject -and -not $InputObject.DriveLetter) {
                 throw ("Could not mount Image the returning Object was null or no driveletter was assigned to. DriveLetter - {0} -" -f $InputObject.DriveLetter )       
 
@@ -48,8 +49,7 @@ function Mount-IWImage {
 
         if ([System.IO.File]::Exists(("{0}:\Deploy\Boot\LiteTouchPE_x64.wim" -f $InputObject.DriveLetter))) {
             Write-PSFMessage -Level Host -Message ("WinPE detected.")       
-        }
-        else {
+        } else {
             throw 'ISO is not a WINPE.'
         }
     }
