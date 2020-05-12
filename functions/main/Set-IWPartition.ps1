@@ -1,6 +1,6 @@
 function Set-IWPartition {
     param(
-        #Input Object should be passed from Get-IWDevices
+        #Input Object should be passed from Get-IWDevice
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = "Input Object requires a type of MSFT_Disk")]
         $InputObject,
 

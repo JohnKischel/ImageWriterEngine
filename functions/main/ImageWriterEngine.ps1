@@ -36,20 +36,20 @@ function Start-ImageWriterEngine {
 
     process {
         # Remove the -Secure to select other drives than usb.
-        Get-IWDevices -DriveLetter $DriveLetter -Secure | Out-Null
+        Get-IWDevice -DriveLetter $DriveLetter -Secure | Out-Null
 
         # Mount Image
         Mount-IWImage | Out-Null
 
         # if the image size exceeds the drivesize an error is thrown.
-        if (-not ((Get-IWDevices -DriveLetter $DriveLetter | Get-Partition | Where-Object {$_.DriveLetter -eq "$DriveLetter"}).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
+        if (-not ((Get-IWDevice -DriveLetter $DriveLetter | Get-Partition | Where-Object {$_.DriveLetter -eq "$DriveLetter"}).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
             Dismount-IWImage
-            Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
+            Get-IWDevice -DriveLetter $DriveLetter | Start-IWPrepareDevice
             #throw 'Not enough available capacity.'
         }
 
         if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
-            Get-IWDevices -DriveLetter $DriveLetter | Start-IWPrepareDevice
+            Get-IWDevice -DriveLetter $DriveLetter | Start-IWPrepareDevice
         }
         # Copy image to selected device.
         Copy-IWImage

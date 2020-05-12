@@ -48,7 +48,7 @@ function Mount-IWImage {
     
 
         if ([System.IO.File]::Exists(("{0}:\Deploy\Boot\LiteTouchPE_x64.wim" -f $InputObject.DriveLetter))) {
-            Write-PSFMessage -Level Host -Message ("WinPE detected.")       
+            Write-PSFMessage -Level Verbose -Message ("WinPE detected.")       
         } else {
             throw 'ISO is not a WINPE.'
         }

@@ -1,7 +1,7 @@
 function Start-IWPrepareDevice
 {
     param(
-        # This InputObject should be passed from Get-IWDevices
+        # This InputObject should be passed from Get-IWDevice
         [Parameter(ValueFromPipeline)]
         $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject),
 

@@ -47,7 +47,7 @@
 	FunctionsToExport = @(
 		'Start-ImageWriterEngine',
 		"Compare-IWImage",
-		"Get-IWDevices",
+		"Get-IWDevice",
 		"Mount-IWImage",
 		"Set-IWHardwareDetection",
 		"Set-IWPartition",

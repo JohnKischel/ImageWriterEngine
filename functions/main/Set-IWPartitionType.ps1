@@ -1,6 +1,6 @@
 function Set-IWPartitionType {
     param(
-        #Input Object should be parsed from Get-IWDevices
+        #Input Object should be parsed from Get-IWDevice
         [Parameter(ValueFromPipeline)]
         $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject)
     )

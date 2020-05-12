@@ -9,7 +9,7 @@ function Initialize-IWBootConfigurationData {
     )
     
     begin {
-        Get-IWDevices -DriveLetter $DriveLetter | Out-Null
+        Get-IWDevice -DriveLetter $DriveLetter | Out-Null
         Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
     }
     

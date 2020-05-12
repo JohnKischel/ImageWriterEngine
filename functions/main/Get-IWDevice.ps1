@@ -1,5 +1,5 @@
 
-function Get-IWDevices {
+function Get-IWDevice {
     param(
         # Device DriveLetter
         [Parameter(ParameterSetName = "GetByDriveLetter")]
