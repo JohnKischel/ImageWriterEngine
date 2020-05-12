@@ -32,6 +32,8 @@ function Start-ImageWriterEngine {
 
         # Remove previous jobs.
         try { Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force } catch { 'Tried to remove previous jobs.' }
+        New-IWNotification -Message ("Started.")
+
     }
 
     process {
@@ -45,6 +47,7 @@ function Start-ImageWriterEngine {
         if (-not ((Get-IWDevice -DriveLetter $DriveLetter | Get-Partition | Where-Object {$_.DriveLetter -eq "$DriveLetter"}).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
             Dismount-IWImage
             Get-IWDevice -DriveLetter $DriveLetter | Start-IWPrepareDevice
+            New-IWNotification -Message ("Preparing volume {0}" -f $DriveLetter)
             #throw 'Not enough available capacity.'
         }
 
@@ -81,5 +84,6 @@ function Start-ImageWriterEngine {
         # Cleanup Session
         # Remove-Item -Path ("{0}\*" -f (Get-PSFConfigValue ImageWriterEngine.Session.Path)) -Force -Recurse -ErrorAction 0
         $ErrorActionPreference = "Continue"
+        New-IWNotification -Message ("Finished. You can now remove the device.")
     }
 }
