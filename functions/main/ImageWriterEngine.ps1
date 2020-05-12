@@ -20,15 +20,13 @@ function Start-ImageWriterEngine {
         [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath))) | Out-Null        
 
         # Dismount previous images.
-        Dismount-IWImage -ImagePath $ImagePath 
+        if ($ImagePath) { Dismount-IWImage -ImagePath $ImagePath }
 
         # Set global imagepath
         Set-PSFConfig -Name 'ImageWriterEngine.Session.DiskImagePath' -Value $ImagePath
 
         # Stop Hardware detection service.
         Set-IWHardwareDetection -Stop
-        
-        
 
         # Remove previous jobs.
         try { Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force } catch { 'Tried to remove previous jobs.' }
@@ -44,7 +42,7 @@ function Start-ImageWriterEngine {
         Mount-IWImage | Out-Null
 
         # if the image size exceeds the drivesize an error is thrown.
-        if (-not ((Get-IWDevice -DriveLetter $DriveLetter | Get-Partition | Where-Object {$_.DriveLetter -eq "$DriveLetter"}).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
+        if (-not ((Get-IWDevice -DriveLetter $DriveLetter | Get-Partition | Where-Object { $_.DriveLetter -eq "$DriveLetter" }).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
             Dismount-IWImage
             Get-IWDevice -DriveLetter $DriveLetter | Start-IWPrepareDevice
             New-IWNotification -Message ("Preparing volume {0}" -f $DriveLetter)
