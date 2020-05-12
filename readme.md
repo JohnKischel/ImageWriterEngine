@@ -20,9 +20,8 @@ After you downloaded the module place it in a valid **psmodulepath** in the scop
 
 
 ```diff
-- Attention
-
-Administrator rights are required.
+Note:
+- Administrator rights are required.
 ```
 Import the module where **"X:\yourPath\"** is the path where the module is stored.
 ```Powershell
@@ -41,4 +40,19 @@ Start-ImageWriterEngine -DriveLetter 'YOURdriveletter' -ImagePath 'YOURisopath'
 for a more detailed output do **-Verbose**.
 ```
 Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath' -Verbose
+```
+## ISO selection alternative
+You can place your iso file directly under the `$env:Programdata` path.
+ImageWriterEngine will check for this path.
+```diff
+Note:
+- Only one iso is supported at this time.
+```
+with this setup you can now use.
+```Powershell
+Start-ImageWriterEngine -DriveLetter 'YOURdriveletter'
+
+# or 
+
+Start-ImageWriterEngine -DriveLetter 'YOURdriveletter' -Verbose
 ```
