@@ -9,6 +9,9 @@ function Set-IWHardwareDetection {
     
     begin {
         $Service = Get-Service -Name "ShellHWDetection"
+        if (-not $Service) {
+            throw 'Unable to get service.'
+        }
     }
 
     process {
@@ -21,7 +24,6 @@ function Set-IWHardwareDetection {
     }
 
     end {
-        Write-PSFMessage -Level Host -Message $("Service {0}" -f $message.Status) 
+        Write-PSFMessage -Level Verbose -Message $("Service {0}" -f $message.Status) 
     }
-
 }
