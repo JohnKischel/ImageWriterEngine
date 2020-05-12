@@ -1,21 +1,44 @@
 ﻿# ImageWriterEngine
-## Make your usbdevice Bootable from CLI.
+### Make your usbdevice bootable from powershell.
 
-The ImageWriterEngine enables you to make your usbdevice bootable with your selected *WinPE-ISO* from the commandline.
+The **ImageWriterEngine** enables you to make your usbdevice bootable with your selected **WinPE-ISO** from the commandline.
 
 ## How to install.
 ---
-- Download the latest release
-- Expand the zip archive and store the module in a valid powershellmodule path.
-> https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7
-> https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1
 
-or use
+Download the latest release
+- > https://github.com/JohnKischel/ImageWriterEngine/releases
 
-> ```git clone https://github.com/JohnKischel/ImageWriterEngine.git --recurse-submodules```
+    or use 
 
-## Easy to use.
+- > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git --recurse-submodules```
+
+After you downloaded the module place it in a valid **psmodulepath** in the scope of your favour.
+
+- > https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7
+- > https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1
+
+
+```diff
+- Attention
+
+Administrator rights are required.
 ```
-Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath'
+Import the module where **"X:\yourPath\"** is the path where the module is stored.
+```Powershell
+Import-Module "X:\yourPath\ImageWriterEngine"
 ```
-This command will prepare your device with all partitions needed. Copy your image and create the neccesary bootloader/bootmgr.
+
+
+## How to use.
+```Powershell
+# Example YOURdriveletter F
+# Example YOURisopath E:\MyISOs\MyWinPE.iso
+
+Start-ImageWriterEngine -DriveLetter 'YOURdriveletter' -ImagePath 'YOURisopath'
+```
+
+for a more detailed output do **-Verbose**.
+```
+Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath' -Verbose
+```
