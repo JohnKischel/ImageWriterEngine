@@ -8,6 +8,7 @@ The ImageWriterEngine enables you to make your usbdevice bootable with your sele
 - Download the latest release
 - Expand the zip archive and store the module in a valid powershellmodule path.
 > https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7
+> https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1
 
 or use
 
