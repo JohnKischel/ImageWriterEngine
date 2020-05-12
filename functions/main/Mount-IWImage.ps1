@@ -10,10 +10,10 @@ function Mount-IWImage {
 
     begin {
         if ([String]::IsNullOrEmpty($ImagePath)) {
-            Write-PSFMessage -Level Host -Message "Searching for image locally."
+            Write-PSFMessage -Level Verbose -Message "Searching for image locally."
             $ImagePath = (Get-ChildItem -Path (Join-PSFPath (Get-PSFConfigValue ImageWriterEngine.Session.Path) -Child "*.iso") -ErrorAction 0).FullName
             if ($ImagePath) {
-                Write-PSFMessage -Level Host -Message ("Image: {0} found." -f $ImagePath)
+                Write-PSFMessage -Level Verbose -Message ("Image: {0} found." -f $ImagePath)
             }
         }
 
@@ -32,7 +32,7 @@ function Mount-IWImage {
         }
 
         if ($InputObject -and $InputObject.DriveLetter) {
-            Write-PSFMessage -Level Host -Message ("Image: [ {0} ] mounted as [ {1}: ] with size [ {2:f2} ]" -f $InputObject.FileSystemLabel , $InputObject.DriveLetter, ($InputObject.Size / 1GB ))       
+            Write-PSFMessage -Level Verbose -Message ("Image: [ {0} ] mounted as [ {1}: ] with size [ {2:f2} ]" -f $InputObject.FileSystemLabel , $InputObject.DriveLetter, ($InputObject.Size / 1GB ))       
             Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImage -Value $InputObject -Description "Mounted Image as object."
             Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImagePath -Value $ImagePath -Description "ISO ImagePath"
         } else {

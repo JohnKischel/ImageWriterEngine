@@ -11,7 +11,7 @@ function Set-IWPartitionType {
     process {
         try {
             Clear-Disk -RemoveData -Confirm:$true -InputObject $InputObject -RemoveOEM -ErrorAction Stop
-            Write-PSFMessage -Level Host -Message ("Device {0} with serialnumber {1} cleaned." -f $InputObject.FriendlyName, $InputObject.SerialNumber)
+            Write-PSFMessage -Level Verbose -Message ("Device {0} with serialnumber {1} cleaned." -f $InputObject.FriendlyName, $InputObject.SerialNumber)
         }
         catch {
             throw "Failure while cleaning the disk."
@@ -20,7 +20,7 @@ function Set-IWPartitionType {
         if ($InputObject.PartitionStyle -ne "GPT") {
             try {
                 Set-Disk -PartitionStyle GPT -InputObject $InputObject -ErrorAction Stop
-                Write-PSFMessage -Level Host -Message ("Device {0} is now GPT" -f $InputObject.FriendlyName)
+                Write-PSFMessage -Level Verbose -Message ("Device {0} is now GPT" -f $InputObject.FriendlyName)
             }
             catch {
                 throw "Failure while setting the Device to GPT."

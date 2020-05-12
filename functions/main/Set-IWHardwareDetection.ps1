@@ -24,6 +24,6 @@ function Set-IWHardwareDetection {
     }
 
     end {
-        Write-PSFMessage -Level Host -Message $("Service {0}" -f $message.Status) 
+        Write-PSFMessage -Level Verbose -Message $("Service {0}" -f $message.Status) 
     }
 }

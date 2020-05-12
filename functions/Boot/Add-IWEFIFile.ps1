@@ -17,7 +17,7 @@ function Add-IWEFIFile {
     
     process {
         Robocopy ("{0}:\Deploy\Boot\x64\EFI\Boot" -f $DriveLetter) $EFIFilePath bootx64.efi /S /MIR /E /W:1 /R:2 | Out-Null
-        Write-PSFMessage -Level Host -Message "EFIFile copied to EFI partition."
+        Write-PSFMessage -Level Verbose -Message "EFIFile copied to EFI partition."
     }
     
     end {

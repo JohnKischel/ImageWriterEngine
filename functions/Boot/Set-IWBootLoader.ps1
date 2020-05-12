@@ -35,7 +35,7 @@ function Set-IWBootloader {
             bcdedit /store "$StorePath\BCD" /set "{$Identifier}" detecthal Yes | Out-Null
             bcdedit /store "$StorePath\BCD" /set "{$Identifier}" winpe Yes | Out-Null
             bcdedit /store "$StorePath\BCD" /set "{$Identifier}" ems Yes | Out-Null
-            Write-PSFMessage -Level Host -Message ("Bootloader settings set.") -Tag "Bootloader"
+            Write-PSFMessage -Level Verbose -Message ("Bootloader settings set.") -Tag "Bootloader"
         }
         catch {
             throw $_.Exception

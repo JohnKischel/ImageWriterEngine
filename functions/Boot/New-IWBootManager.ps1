@@ -33,9 +33,9 @@ function New-IWBootManager {
         }
 
         bcdedit.exe /createstore "$StorePath\BCD" | Out-Null
-        Write-PSFMessage -Level Host -Message "$StorePath\BCD" -Tag "Bootloader" 
+        Write-PSFMessage -Level Verbose -Message "$StorePath\BCD" -Tag "Bootloader" 
         bcdedit.exe /store "$StorePath\BCD" /create '{bootmgr}' /d "Microsoft Boot Manager" | Out-Null
-        Write-PSFMessage -Level Host -Message ("Create Microsoft Boot Manager.") -Tag "Bootloader"
+        Write-PSFMessage -Level Verbose -Message ("Create Microsoft Boot Manager.") -Tag "Bootloader"
 
         bcdedit /store "$StorePath\BCD" /set '{bootmgr}' description 'Windows Boot Manager' | Out-Null
         bcdedit /store "$StorePath\BCD" /set '{bootmgr}' flightsigning Yes | Out-Null

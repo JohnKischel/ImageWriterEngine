@@ -21,7 +21,7 @@ function Add-IWRamdisk {
             bcdedit /store $StorePath /create '{ramdiskoptions}' /d "ramdiskoption" | Out-Null
             bcdedit /store $StorePath /set '{ramdiskoptions}' ramdisksdidevice partition="$DriveLetter`:" | Out-Null
             bcdedit /store $StorePath /set '{ramdiskoptions}' ramdisksdipath \boot\boot.sdi | Out-Null
-            Write-PSFMessage -Level Host -Message ("RamDisk added.") -Tag "Bootloader"
+            Write-PSFMessage -Level Verbose -Message ("RamDisk added.") -Tag "Bootloader"
         }
         catch {
             throw $_.Exception 
