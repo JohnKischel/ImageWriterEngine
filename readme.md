@@ -33,7 +33,7 @@ Start-ImageWriterEngine -DriveLetter F -ImagePath 'E:\MyISOs\MyWinPE.iso'
 ```
 
 for a more detailed output do **-Verbose**.
-```
+```PowerShell
 Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath' -Verbose
 ```
 ## ISO selection alternative
