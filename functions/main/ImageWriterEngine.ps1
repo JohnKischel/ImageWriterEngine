@@ -30,8 +30,6 @@ function Start-ImageWriterEngine {
 
         # Remove previous jobs.
         try { Get-Job -Name ImageCopy -ErrorAction 0 | Remove-Job -ErrorAction 0 -Force } catch { 'Tried to remove previous jobs.' }
-        New-IWNotification -Message ("Started.")
-
     }
 
     process {
@@ -53,6 +51,7 @@ function Start-ImageWriterEngine {
             Get-IWDevice -DriveLetter $DriveLetter | Start-IWPrepareDevice
         }
         # Copy image to selected device.
+        New-IWNotification -Message ("Started. Transfer image.")
         Copy-IWImage
 
         

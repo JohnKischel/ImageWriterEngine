@@ -12,37 +12,41 @@ Download the latest release
 
 - > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git --recurse-submodules```
 
-
-```diff
-Note:
-- Administrator rights are required for all following steps..
-```
-
 # How to install.
 
-If you downloaded the **release** there are two possible solution to install/use the module. First **Unzip** the release. Then follow one of the solutions.
+If you **downloaded** the **release** there are two possible solution to install/use the module. First **unzip** the release. Then follow **one** of the solutions.
 
 Solution 1
 =====
-After you downloaded the module, place the expanded zip in a valid **psmodulepath** in the [scope](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_modules?view=powershell-7#module-and-dsc-resource-locations-and-psmodulepath) of your needs. If you need some help, how to install a module.
+After you downloaded the module, place the **expanded** zip in a valid **psmodulepath** in the [scope](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_modules?view=powershell-7#module-and-dsc-resource-locations-and-psmodulepath) of your needs.
+
+To determine wich powershell version you are using and where to copy the module.
+
+Open a WindowsPowershell and type **$PSVersionTable** then press **ENTER**
+Look for the value PSVersion.
+
+|Name|Value|
+|---------|-------------|
+|PSVersion|5.1.18362.752|
+
+```Powershell
+# For version PowerShell 5.1 (CurrentUser) (Recommended)
+'C:\Users\USERNAME\Documents\WindowsPowerShell\Modules'
+
+# CurrentUser PowerShell 7 (CurrentUser) (Recommended)
+'C:\Users\USERNAME\Documents\PowerShell\Modules'
+
+# AllUsers
+"C:\Program Files\WindowsPowerShell\Modules"
+
+# System-wide
+"C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+```
+If you need some help, how to install a module.
 
 [Installing a module in Powershell 5.1](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1>)
 
 [Installing a module in Powershell 7](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7)
-
-```Powershell
-# Example 5.1 (Recommended)
-'C:\Users\USERNAME\Documents\WindowsPowerShell\Modules'
-
-#Example 7 (Recommended)
-'C:\Users\USERNAME\Documents\PowerShell\Modules'
-
-# Example 2
-"C:\Program Files\WindowsPowerShell\Modules"
-
-# System-wide locations: $PSHOME\Modules
-"C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
-```
 
 Solution 2
 =====
@@ -58,6 +62,11 @@ Import-Module "X:\yourPath\ImageWriterEngine"
 
 ## How to use.
 ---
+```diff
+Note:
+- Administrator rights are required for all following steps..
+```
+Open a WindowsPowershell as administrator.
 ```Powershell
 # Example YOURdriveletter F
 # Example YOURisopath E:\MyISOs\MyWinPE.iso
