@@ -3,8 +3,7 @@
 
 The **ImageWriterEngine** enables you to make your usbdevice bootable with your selected **WinPE-ISO** from the commandline.
 
-## How to install.
----
+# Where to download?
 
 Download the latest release
 - > https://github.com/JohnKischel/ImageWriterEngine/releases
@@ -12,31 +11,53 @@ Download the latest release
     or use 
 
 - > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git --recurse-submodules```
----
+
 
 ```diff
 Note:
 - Administrator rights are required for all following steps..
 ```
 
-If you downloaded the release there are two possible solution to install/use the module. First **Unzip** the release. Then follow one of the solutions.
+# How to install.
+
+If you downloaded the **release** there are two possible solution to install/use the module. First **Unzip** the release. Then follow one of the solutions.
 
 Solution 1
 =====
-After you downloaded the module, place it in a valid **psmodulepath** in the scope of your needs. If you need some help, how to install a module.
+After you downloaded the module, place the expanded zip in a valid **psmodulepath** in the [scope](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_modules?view=powershell-7#module-and-dsc-resource-locations-and-psmodulepath) of your needs. If you need some help, how to install a module.
 
 [Installing a module in Powershell 5.1](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1>)
 
 [Installing a module in Powershell 7](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7)
 
+```Powershell
+# Example 5.1 (Recommended)
+'C:\Users\USERNAME\Documents\WindowsPowerShell\Modules'
+
+#Example 7 (Recommended)
+'C:\Users\USERNAME\Documents\PowerShell\Modules'
+
+# Example 2
+"C:\Program Files\WindowsPowerShell\Modules"
+
+# System-wide locations: $PSHOME\Modules
+"C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+```
+
 Solution 2
 =====
-Import the module where **"X:\yourPath\"** is the path where the module is stored.
+```diff
+Note:
+! Only for the current shell session.
+- After you close the shell session you have to do import the module again
+```
+Import the module where **"X:\yourPath\"** is the path where the module is stored locally.
 ```Powershell
 Import-Module "X:\yourPath\ImageWriterEngine"
 ```
 
 ## How to use.
+---
 ```Powershell
 # Example YOURdriveletter F
 # Example YOURisopath E:\MyISOs\MyWinPE.iso
