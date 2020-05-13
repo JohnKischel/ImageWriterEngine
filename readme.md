@@ -19,14 +19,14 @@ Download the latest release.
 ---
 ```diff
 Note:
-- Administrator rights are required for all following steps.
+- Administrator privileges are required for all following steps.
 ```
-Open a WindowsPowershell as administrator.
+Open a WindowsPowershell as Administrator.
 ```Powershell
-# Determine your device volumeletter and replace YOURdriveletter with it.
-# Determine YOURisopath for example my iso path is E:\MyISOs\MyWinPE.iso
+# Determine your device volume letter and replace <YOURdriveletter> with it.
+# Determine <YOURisopath> - for example my iso path is E:\MyISOs\MyWinPE.iso
 
-Start-ImageWriterEngine -DriveLetter 'YOURdriveletter' -ImagePath 'YOURisopath'
+Start-ImageWriterEngine -DriveLetter <YOURdriveletter> -ImagePath <YOURisopath>
 
 # Example !!! It can look like the following command
 Start-ImageWriterEngine -DriveLetter F -ImagePath 'E:\MyISOs\MyWinPE.iso'
@@ -43,11 +43,11 @@ ImageWriterEngine will check for this path.
 Note:
 - Only one iso is supported at this time.
 ```
-with this setup you can now use.
+with this setup you can now use:
 ```Powershell
-Start-ImageWriterEngine -DriveLetter 'YOURdriveletter'
+Start-ImageWriterEngine -DriveLetter <YOURdriveletter>
 
 # or 
 
-Start-ImageWriterEngine -DriveLetter 'YOURdriveletter' -Verbose
+Start-ImageWriterEngine -DriveLetter <YOURdriveletter> -Verbose
 ```
