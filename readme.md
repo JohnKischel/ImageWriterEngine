@@ -23,26 +23,27 @@ After you downloaded the module, place the **expanded** zip in a valid **psmodul
 To determine wich powershell version you are using and where to copy the module.
 
 Open a WindowsPowershell and type **$PSVersionTable** then press **ENTER**
-Look for the value PSVersion.
+Look for the entry PSVersion.
 
 |Name|Value|
 |---------|-------------|
 |PSVersion|5.1.18362.752|
 
 ```Powershell
-# For version PowerShell 5.1 (CurrentUser) (Recommended)
+# AllUsers (Recommended)
+"C:\Program Files\WindowsPowerShell\Modules"
+
+# For version PowerShell 5.1 (CurrentUser)
 'C:\Users\USERNAME\Documents\WindowsPowerShell\Modules'
 
-# CurrentUser PowerShell 7 (CurrentUser) (Recommended)
+# CurrentUser PowerShell 7 (CurrentUser)
 'C:\Users\USERNAME\Documents\PowerShell\Modules'
-
-# AllUsers
-"C:\Program Files\WindowsPowerShell\Modules"
 
 # System-wide
 "C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
 ```
-If you need some help, how to install a module.
+
+If you have some troublewhile installing the module. Click the links for further reading.
 
 [Installing a module in Powershell 5.1](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1>)
 
