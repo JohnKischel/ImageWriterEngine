@@ -12,22 +12,29 @@ Download the latest release
     or use 
 
 - > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git --recurse-submodules```
-
-After you downloaded the module place it in a valid **psmodulepath** in the scope of your favour.
-
-- > https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7
-- > https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1
-
+---
 
 ```diff
 Note:
-- Administrator rights are required.
+- Administrator rights are required for all following steps..
 ```
+
+If you downloaded the release there are two possible solution to install/use the module. First **Unzip** the release. Then follow one of the solutions.
+
+Solution 1
+=====
+After you downloaded the module, place it in a valid **psmodulepath** in the scope of your needs. If you need some help, how to install a module.
+
+[Installing a module in Powershell 5.1](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1>)
+
+[Installing a module in Powershell 7](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7)
+
+Solution 2
+=====
 Import the module where **"X:\yourPath\"** is the path where the module is stored.
 ```Powershell
 Import-Module "X:\yourPath\ImageWriterEngine"
 ```
-
 
 ## How to use.
 ```Powershell
