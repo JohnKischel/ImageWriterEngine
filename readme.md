@@ -55,7 +55,10 @@ Solution 2
 Note:
 ! Only for the current shell session.
 - After you close the shell session you have to do import the module again
+- Administrator rights are required for all following steps.
 ```
+Open a WindowsPowershell as administrator.
+
 Import the module where **"X:\yourPath\"** is the path where the module is stored locally.
 ```Powershell
 Import-Module "X:\yourPath\ImageWriterEngine"
@@ -65,7 +68,7 @@ Import-Module "X:\yourPath\ImageWriterEngine"
 ---
 ```diff
 Note:
-- Administrator rights are required for all following steps..
+- Administrator rights are required for all following steps.
 ```
 Open a WindowsPowershell as administrator.
 ```Powershell
