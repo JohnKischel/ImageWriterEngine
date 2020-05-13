@@ -79,7 +79,7 @@ for a more detailed output do **-Verbose**.
 Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath' -Verbose
 ```
 ## ISO selection alternative
-You can place your iso file directly under the `$env:Programdata` path.
+You can place your iso file directly under the `$env:Programdata\ImageWriterEngine` path.
 ImageWriterEngine will check for this path.
 ```diff
 Note:
