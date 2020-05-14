@@ -22,6 +22,8 @@ Note:
 - Administrator privileges are required for all following steps.
 ```
 Open a WindowsPowershell as Administrator.
+
+Type in the command with your settings.
 ```Powershell
 # Determine your device volume letter and replace <YOURdriveletter> with it.
 # Determine <YOURisopath> - for example my iso path is E:\MyISOs\MyWinPE.iso
@@ -32,7 +34,11 @@ Start-ImageWriterEngine -DriveLetter <YOURdriveletter> -ImagePath <YOURisopath>
 Start-ImageWriterEngine -DriveLetter F -ImagePath 'E:\MyISOs\MyWinPE.iso'
 ```
 
-for a more detailed output do **-Verbose**.
+Press return to start the installaton.
+Verify the device formatting with return.
+
+For a more detailed output do **-Verbose**.
+
 ```PowerShell
 Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath' -Verbose
 ```
