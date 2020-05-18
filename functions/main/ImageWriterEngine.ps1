@@ -15,10 +15,6 @@ function Start-ImageWriterEngine {
 
         $ErrorActionPreference = "STOP"
 
-        #Create file folder structure.
-        [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
-        [System.IO.Directory]::CreateDirectory(("{0}" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath))) | Out-Null        
-
         # Dismount previous images.
         if ($ImagePath) { Dismount-IWImage -ImagePath $ImagePath }
 
@@ -33,6 +29,16 @@ function Start-ImageWriterEngine {
     }
 
     process {
+
+        #Create file folder structure.
+        if(-not (Test-Path (Get-PSFConfigValue ImageWriterEngine.Session.Path)))
+        {
+            [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
+        }
+        if(-not (Test-Path (Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath)))
+        {
+            [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath)) | Out-Null        
+        }
         # Remove the -Secure to select other drives than usb.
         Get-IWDevice -DriveLetter $DriveLetter -Secure | Out-Null
 
