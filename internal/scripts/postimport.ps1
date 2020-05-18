@@ -21,4 +21,4 @@ foreach ($file in (Get-ChildItem "$($script:ModuleRoot)\internal\tepp\*.tepp.ps1
 # Load License
 . Import-ModuleFile -Path "$($script:ModuleRoot)\internal\scripts\license.ps1"
 
-Import-Module ".\lib\psframework\PSFramework" -Scope Global -Force
+# Import-Module ".\lib\psframework\PSFramework" -Scope Global -Force
