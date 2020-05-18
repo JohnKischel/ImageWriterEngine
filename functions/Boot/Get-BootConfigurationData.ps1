@@ -17,7 +17,7 @@ function Get-IWBootConfigurationData {
     }
     
     process {
-        return bcdedit.exe /store ("{0}\BCD" -f $StorePath) /enum all /v
+        return bcdedit /store ("{0}\BCD" -f $StorePath) /enum all /v
     }
     
     end {
