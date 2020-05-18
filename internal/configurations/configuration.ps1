@@ -21,15 +21,20 @@ Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.Windows' -Value '{ebd
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.EFI' -Value '{c12a7328-f81f-11d2-ba4b-00a0c93ec93b}' -Description 'Predefined EFIPartition GUID'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.MSR' -Value '{e3c9e316-0b5c-4db8-817d-f92df00215ae}' -Description 'Predefined MSRPartition GUID.'
 
+#Session
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Id' -Value (New-Guid).Guid -Description 'ImageWriteEngine sessionId'
+
 # Pathes
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Path' -Value (Join-PSFPath $env:ProgramData -Child ImageWriterEngine) -Description 'Path of the current ImageWriterSession'
-Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Id' -Value (New-Guid).Guid -Description 'ImageWriteEngine sessionId'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.CurrentSession' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id) ) -Description 'ImageWriteEngine sessionId'
+
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.MountPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "mnt" ) -Description 'Folder wich mounts the EFIPartition.'
-Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.isMounted' -Value 0 -Description 'Holds a record of the mountpath mounted status.'
+Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.isMounted' -Value 0 -Description 'Contains a record of the mountpath mounted status.'
 
 # LOGPath
 Set-PSFConfig -Module 'PSFramework' -Name 'Logging.FileSystem.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "Logs")
+
+
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.EFIPath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "\EFI\Boot") -Description 'Location of the BCD Store'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.StorePath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "EFI\Microsoft\Boot") -Description 'EFIFile destinationpath'
 
