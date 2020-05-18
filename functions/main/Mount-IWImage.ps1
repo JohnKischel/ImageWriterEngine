@@ -10,10 +10,10 @@ function Mount-IWImage {
 
     begin {
         if ([String]::IsNullOrEmpty($ImagePath)) {
-            Write-PSFMessage -Level Verbose -Message "Searching for image locally."
+            Write-PSFMessage -Level Verbose -Message "Searching for image locally."  -Tag 'Image'
             $ImagePath = (Get-ChildItem -Path (Join-PSFPath (Get-PSFConfigValue ImageWriterEngine.Session.Path) -Child "*.iso") -ErrorAction 0).FullName
             if ($ImagePath) {
-                Write-PSFMessage -Level Verbose -Message ("Image: {0} found." -f $ImagePath)
+                Write-PSFMessage -Level Verbose -Message ("Image: {0} found." -f $ImagePath) -Tag 'Image'
             }
         }
 
@@ -32,7 +32,7 @@ function Mount-IWImage {
         }
 
         if ($InputObject -and $InputObject.DriveLetter) {
-            Write-PSFMessage -Level Verbose -Message ("Image: [ {0} ] mounted as [ {1}: ] with size [ {2:f2} ]" -f $InputObject.FileSystemLabel , $InputObject.DriveLetter, ($InputObject.Size / 1GB ))       
+            Write-PSFMessage -Level Verbose -Message ("Image: [ {0} ] mounted as [ {1}: ] with size [ {2:f2} ]" -f $InputObject.FileSystemLabel , $InputObject.DriveLetter, ($InputObject.Size / 1GB ))  -Tag 'Image'
             Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImage -Value $InputObject -Description "Mounted Image as object."
             Set-PSFConfig -FullName ImageWriterEngine.Session.DiskImagePath -Value $ImagePath -Description "ISO ImagePath"
         } else {
@@ -48,7 +48,7 @@ function Mount-IWImage {
     
 
         if ([System.IO.File]::Exists(("{0}:\Deploy\Boot\LiteTouchPE_x64.wim" -f $InputObject.DriveLetter))) {
-            Write-PSFMessage -Level Verbose -Message ("WinPE detected.")       
+            Write-PSFMessage -Level Verbose -Message ("WinPE detected.") -Tag 'Image'       
         } else {
             throw 'ISO is not a WINPE.'
         }

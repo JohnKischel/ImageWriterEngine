@@ -37,7 +37,7 @@ function Dismount-IWEFIPartition {
             throw 'The access path is not valid or no volume is mounted.'
         }
         else {
-            Write-PSFMessage -Level Verbose -Message ("Dismounted EFIPartition.")
+            Write-PSFMessage -Level Verbose -Message ("Dismounted EFIPartition.") -Tag 'EFIPartition'
             Set-PSFConfig -FullName ImageWriterEngine.Session.isMounted -Value 0
         }
     }

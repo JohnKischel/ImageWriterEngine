@@ -25,10 +25,11 @@ Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Partition.MSR' -Value '{e3c9e31
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Path' -Value (Join-PSFPath $env:ProgramData -Child ImageWriterEngine) -Description 'Path of the current ImageWriterSession'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.Id' -Value (New-Guid).Guid -Description 'ImageWriteEngine sessionId'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.CurrentSession' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -Child (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Id) ) -Description 'ImageWriteEngine sessionId'
-Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "LOG" ) -Description 'store for isofiles'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.MountPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "mnt" ) -Description 'Folder wich mounts the EFIPartition.'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.isMounted' -Value 0 -Description 'Holds a record of the mountpath mounted status.'
 
+# LOGPath
+Set-PSFConfig -Module 'PSFramework' -Name 'Logging.FileSystem.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "Logs")
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.EFIPath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "\EFI\Boot") -Description 'Location of the BCD Store'
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.StorePath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "EFI\Microsoft\Boot") -Description 'EFIFile destinationpath'
 

@@ -34,7 +34,7 @@ function Copy-IWImage {
         }
 
         if ($job = Get-Job -Name ImageCopy) {
-            Write-PSFMessage -Level Verbose -Message ("Job {0} started with ID {1}" -f $job.Name, $job.Id)
+            Write-PSFMessage -Level Verbose -Message ("Job {0} started with ID {1}" -f $job.Name, $job.Id) -Tag 'Robocopy'
         }
     }
 

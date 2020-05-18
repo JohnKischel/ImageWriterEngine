@@ -38,9 +38,9 @@ function Set-IWPartition {
                     throw 'Could create a new basic partition.'                  
                 }
 
-                Write-PSFMessage -Level Verbose -Message ("Set WindowsPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows), $InputObject.FriendlyName, $InputObject.SerialNumber)
+                Write-PSFMessage -Level Verbose -Message ("Set WindowsPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows), $InputObject.FriendlyName, $InputObject.SerialNumber) -Tag 'Partition'
                 Format-Volume -FileSystem 'NTFS' -NewFileSystemLabel 'IWE' -DriveLetter $DriveLetter  -Force | Out-Null
-                Write-PSFMessage -Level Verbose -Message ("Formatted Partition to [ NTFS ] and Label [ IWE ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR))
+                Write-PSFMessage -Level Verbose -Message ("Formatted Partition to [ NTFS ] and Label [ IWE ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR)) -Tag 'Partition'
                 Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
                 break
             }
@@ -48,7 +48,7 @@ function Set-IWPartition {
             MSRPartition {
                 try {
                     New-Partition -InputObject $InputObject -Size 128MB -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR) -IsActive:$false -IsHidden -ErrorAction Stop | Out-Null
-                    Write-PSFMessage -Level Verbose -Message ("Set MSRPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR), $InputObject.FriendlyName, $InputObject.SerialNumber)
+                    Write-PSFMessage -Level Verbose -Message ("Set MSRPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR), $InputObject.FriendlyName, $InputObject.SerialNumber)  -Tag 'Partition'
                 }
                 catch {
                     throw 'Could not create the MSR partition.'
