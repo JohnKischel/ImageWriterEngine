@@ -59,6 +59,7 @@
 		"Add-IWEFIFile",
 		"Dismount-IWImage",
 		'Copy-IWImage'
+		'New-IWNotification'
 		# Boot
 
 		"Add-IWBootloader",
