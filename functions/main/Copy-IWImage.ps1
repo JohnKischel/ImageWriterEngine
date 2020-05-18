@@ -17,7 +17,7 @@ function Copy-IWImage {
         [ValidateNotNullOrEmpty()]
         [ValidatePattern('.+\.txt')]
         [string]
-        $LogFile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.LogPath) -Child "ImageCopy.txt"))
+        $LogFile = $("{0}" -f (Join-PSFPath (Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath) -Child "ImageCopy.txt"))
     )
 
     process {
