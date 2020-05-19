@@ -88,6 +88,6 @@ function Start-ImageWriterEngine {
         # Remove-Item -Path ("{0}\*" -f (Get-PSFConfigValue ImageWriterEngine.Session.Path)) -Force -Recurse -ErrorAction 0
         $ErrorActionPreference = "Continue"
         New-IWNotification -Message ("Finished. You can now remove the device.")
-        Clear-Host
+        return 0
     }
 }

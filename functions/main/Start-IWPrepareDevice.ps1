@@ -24,6 +24,7 @@ function Start-IWPrepareDevice
 
     process
     {
+        Write-PSFMessage -Level Verbose -Message "Started IWPrepareDevice"
         $InputObject | Set-IWPartitionType
         $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter -Size ([uint64]((Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size) + 1GB)
         $InputObject | Set-IWPartition -MSRPartition

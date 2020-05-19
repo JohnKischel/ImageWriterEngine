@@ -32,6 +32,7 @@ Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.MountPath' -Value (Join
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.isMounted' -Value 0 -Description 'Contains a record of the mountpath mounted status.'
 
 # LOGPath
+Set-PSFConfig -Module 'PSFramework' -Name 'Logging.FileSystem.ModernLog' -Value $true
 Set-PSFConfig -Module 'PSFramework' -Name 'Logging.FileSystem.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "Logs")
 
 

@@ -28,7 +28,7 @@ function New-IWBootManager {
             [System.IO.Directory]::CreateDirectory($StorePath) | Out-Null
             [System.IO.Directory]::CreateDirectory($EFIPath) | Out-Null
         }
-        elseif($Force.IsPresent){
+        elseif ($Force.IsPresent) {
             Remove-Item -Path "$StorePath\*" -Recurse -Force
         }
 
