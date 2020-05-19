@@ -341,3 +341,6 @@ healthchecksdb
 
 # Custom
 ImageWriterEngine.zip
+*.LOG*
+test
+.build
