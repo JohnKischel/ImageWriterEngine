@@ -14,14 +14,16 @@ function Initialize-IWBootConfigurationData {
     }
     
     process {
+
+        Write-PSFMessage -Level Verbose -Message "Invoke Add-IWEFile"
         Add-IWEFIFile -DriveLetter $DriveLetter
-
+        Write-PSFMessage -Level Verbose -Message "Invoke New-IWBootManager"
         New-IWBootManager  -DriveLetter $DriveLetter -Force
-
+        Write-PSFMessage -Level Verbose -Message "Invoke Add-IWRamdisk"
         Add-IWRamdisk -DriveLetter $DriveLetter
- 
+        Write-PSFMessage -Level Verbose -Message "Invoke Add-IWBootLoader"
         $Identifier = Add-IWBootLoader -DriveLetter $DriveLetter
-
+        Write-PSFMessage -Level Verbose -Message "Invoke Set-IWBootloader"
         Set-IWBootloader -DriveLetter $DriveLetter -Identifier $Identifier
     }
     
