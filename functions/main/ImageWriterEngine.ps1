@@ -9,7 +9,10 @@ function Start-ImageWriterEngine {
         [ValidateNotNullOrEmpty()]
         [ValidatePattern('[A-Za-z]')]
         [Char]
-        $DriveLetter
+        $DriveLetter,
+
+        [switch]
+        $NoProgress
     )
     begin {
 
@@ -31,12 +34,10 @@ function Start-ImageWriterEngine {
     process {
 
         #Create file folder structure.
-        if(-not (Test-Path (Get-PSFConfigValue ImageWriterEngine.Session.Path)))
-        {
+        if (-not (Test-Path (Get-PSFConfigValue ImageWriterEngine.Session.Path))) {
             [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
         }
-        if(-not (Test-Path (Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath)))
-        {
+        if (-not (Test-Path (Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath))) {
             [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath)) | Out-Null        
         }
         # Remove the -Secure to select other drives than usb.
@@ -62,7 +63,9 @@ function Start-ImageWriterEngine {
 
         
         do {
-            Get-IWProgress
+            if (-not($NoProgress.IsPresent)) {
+                Get-IWProgress
+            }
         }while (-not ((Get-Job -Name "ImageCopy").State -eq "Completed"))
         
         try {
