@@ -18,6 +18,7 @@ function Start-IWPrepareDevice
         if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter))
         {
             $DriveLetter = $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString()
+            # Set new evaluated driveletter to override the stored old one.
             Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
         }
     }
