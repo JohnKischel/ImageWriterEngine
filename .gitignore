@@ -344,3 +344,5 @@ ImageWriterEngine.zip
 *.LOG*
 test
 .build
+configuration.json
+Set-IWDevice.ps1
