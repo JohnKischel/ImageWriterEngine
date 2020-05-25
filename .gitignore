@@ -346,3 +346,4 @@ test
 .build
 configuration.json
 Set-IWDevice.ps1
+.vscode
