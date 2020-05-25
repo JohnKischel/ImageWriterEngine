@@ -2,16 +2,21 @@
 function Get-IWDevice {
     param(
         # Device DriveLetter
-        [Parameter(ParameterSetName = "GetByDriveLetter")]
+        [Parameter(ParameterSetName = "ByDriveLetter")]
         [ValidateNotNullOrEmpty()]
         [ValidatePattern('[A-Za-z]')]
         [char]
         $DriveLetter,
 
         # Use this switch to ignore everything except Removeable devices.
-        [Parameter(ParameterSetName = "GetByDriveLetter")]
+        [Parameter(ParameterSetName = "ByDriveLetter")]
         [switch]
         $Secure,
+
+        # Get devices by using the disknumber.
+        [Parameter(ParameterSetName = "ByDiskNumber")]
+        [int]
+        $DiskNumber,
 
         # select this switch to list all drives with driveletter.
         [Parameter(ParameterSetName = "ListAll")]
@@ -28,7 +33,7 @@ function Get-IWDevice {
         switch ($PSCmdlet.ParameterSetName) {
 
             #Gets the volume with specific driveletter.
-            "GetByDriveLetter" {
+            "ByDriveLetter" {
 
                 if (-not (Test-Path -Path $("{0}:\" -f $DriveLetter))) {
                     throw ("{0}:\ was not found as path." -f $DriveLetter)
@@ -54,15 +59,26 @@ function Get-IWDevice {
                 }
             }
 
+            # Get the disk by disknumber.
+            "ByDiskNumber" {
+                $InputObject = Get-Disk -Number $DiskNumber -ErrorAction 0
+                if ($InputObject) {
+                    return $InputObject
+                }
+                else {
+                    throw 'Object returned was null'
+                }
+            }
+
             # List all volumes and disks.
             "ListAll" {
-                Get-Volume | Where-Object { $_.DriveLetter } | Format-Table @{Label="DriveLetter";Expression={$_.DriveLetter}},@{Label="FriendlyName";Expression={$_.FileSystemLabel}},@{Label="Size";Expression={$_.Size}}
-                Get-Disk | Format-Table @{Label="DiskNumber";Expression={$_.DiskNumber}},@{Label="FriendlyName";Expression={$_.FriendlyName}}
+                Get-Volume | Where-Object { $_.DriveLetter } | Format-Table @{Label = "DriveLetter"; Expression = { $_.DriveLetter } }, @{Label = "FriendlyName"; Expression = { $_.FileSystemLabel } }, @{Label = "Size"; Expression = { $_.Size } }
+                Get-Disk | Format-Table @{Label = "DiskNumber"; Expression = { $_.DiskNumber } }, @{Label = "FriendlyName"; Expression = { $_.FriendlyName } }
             }
         }
     }
-    end { 
-        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
-        Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
+    end {
+            Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
+            Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
     }
 }
