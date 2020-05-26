@@ -33,7 +33,7 @@ Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.isMounted' -Value 0 -De
 
 # LOGPath
 Set-PSFConfig -Module 'PSFramework' -Name 'Logging.FileSystem.ModernLog' -Value $true
-Set-PSFConfig -Module 'PSFramework' -Name 'Logging.FileSystem.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.CurrentSession) -Child "Logs")
+Set-PSFConfig -Module 'PSFramework' -Name 'Logging.FileSystem.LogPath' -Value (Join-PSFPath (Get-PSFConfigValue -FullName ImageWriterEngine.Session.Path) -Child "Logs")
 
 
 Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.EFIPath' -Value (Join-PSFPath -Path (Get-PSFConfigValue ImageWriterEngine.Session.MountPath) -Child "\EFI\Boot") -Description 'Location of the BCD Store'
