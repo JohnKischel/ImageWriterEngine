@@ -17,6 +17,11 @@ function Set-IWPartition {
         [Parameter(ParameterSetName = "WindowsPartition")]
         [uint64]$Size = 45GB,
 
+        # Sets the label of the device
+        [Parameter(ParameterSetName = "WindowsPartition")]
+        [ValidateLength(1,10)]
+        [string]$LabelName = "IWE",
+
         #Switch to create a Partition with predefined guid {e3c9e316-0b5c-4db8-817d-f92df00215ae}
         [Parameter(ParameterSetName = "MSRPartition")]
         [Switch]$MSRPartition,
@@ -39,7 +44,7 @@ function Set-IWPartition {
                 }
 
                 Write-PSFMessage -Level Verbose -Message ("Set WindowsPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows), $InputObject.FriendlyName, $InputObject.SerialNumber) -Tag 'Partition'
-                Format-Volume -FileSystem 'NTFS' -NewFileSystemLabel 'IWE' -DriveLetter $DriveLetter  -Force | Out-Null
+                Format-Volume -FileSystem 'NTFS' -NewFileSystemLabel $LabelName -DriveLetter $DriveLetter  -Force | Out-Null
                 Write-PSFMessage -Level Verbose -Message ("Formatted Partition to [ NTFS ] and Label [ IWE ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.MSR)) -Tag 'Partition'
                 Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
                 break
