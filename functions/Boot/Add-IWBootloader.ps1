@@ -20,6 +20,7 @@ function Add-IWBootLoader {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
 
+    # The bcdedit command returns a string text coontaining the guid. Regex parse it and returns the guid.
     process {
         $guid = bcdedit /store $StorePath /create /d $BootLoaderName /application osloader
         $Identifier = [regex]::Matches($guid, "\w{0,8}-\w{0,4}-\w{0,4}-\w{0,4}-\w{0,12}").Value

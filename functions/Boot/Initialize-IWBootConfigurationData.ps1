@@ -13,6 +13,7 @@ function Initialize-IWBootConfigurationData {
         Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
     }
     
+    # Multiple functions from the scripts are executed in the given order to prepare the device wich is specified.
     process {
 
         Write-PSFMessage -Level Verbose -Message "Invoke Add-IWEFile"

@@ -16,6 +16,7 @@ function Get-IWBootConfigurationData {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
     
+    # Returns all entries in the given store.
     process {
         return bcdedit /store ("{0}\BCD" -f $StorePath) /enum all /v
     }

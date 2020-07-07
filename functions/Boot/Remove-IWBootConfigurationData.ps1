@@ -16,6 +16,7 @@ function Remove-IWBootConfigurationData {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
     
+    # Removing the BCD store from the specified device.
     process {
         try {
             Remove-Item -Path $StorePath -Recurse -Force

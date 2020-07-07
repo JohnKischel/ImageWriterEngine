@@ -21,6 +21,7 @@ function Set-IWBootloader {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
 
+    # A bootloader is added. This process only works with winpes that are not modified and have its default name.
     process {
         try {
             bcdedit /store "$StorePath\BCD" /set '{bootmgr}' default "{$Identifier}" | Out-Null

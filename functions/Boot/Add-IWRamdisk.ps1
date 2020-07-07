@@ -16,6 +16,7 @@ function Add-IWRamdisk {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
 
+    # Creating a ramdiskoption in the BCDstore.
     process {
         try {
             bcdedit /store $StorePath /create '{ramdiskoptions}' /d "ramdiskoption" | Out-Null

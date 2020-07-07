@@ -22,6 +22,7 @@ function Dismount-IWEFIPartition {
     begin { 
     }
 
+    # This parts is getting the current mounted EFI partition and dismounts it if its available.
     process {
         if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 0) {break}
         $PartitionType = (Get-Partition -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber).Type

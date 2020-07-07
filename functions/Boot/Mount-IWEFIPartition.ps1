@@ -28,6 +28,7 @@ function Mount-IWEFIPartition {
 
     }
 
+    # The EFI partition of the given device will be mounted.
     process {
         if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 1) {break}
         # Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null

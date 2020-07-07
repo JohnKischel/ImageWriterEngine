@@ -23,6 +23,7 @@ function New-IWBootManager {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
     
+    # A new BCDstore will be created on the specified device and some presettings are parsed to it.
     process {
         if (-not ([System.IO.File]::Exists("$StorePath\BCD"))) {
             [System.IO.Directory]::CreateDirectory($StorePath) | Out-Null

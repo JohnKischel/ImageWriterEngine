@@ -15,6 +15,7 @@ function Add-IWEFIFile {
         Mount-IWEFIPartition -DriveLetter $DriveLetter
     }
     
+    # Robocopy take care of the image transfer and copies the EFIFile from the iso tho the predefined EFIFilepath.
     process {
         Robocopy ("{0}:\Deploy\Boot\x64\EFI\Boot" -f $DriveLetter) $EFIFilePath bootx64.efi /S /MIR /E /W:1 /R:2 | Out-Null
         Write-PSFMessage -Level Verbose -Message "EFIFile copied to EFI partition." -Tag 'Bootloader'
