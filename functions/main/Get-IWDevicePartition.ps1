@@ -26,7 +26,9 @@ function Get-IWDevicePartitions {
         
         if(($DeviceData.BasicPartitionNumber).Count -ne 1)
         {
-            throw 'Multiple partitions marked as Basic found.'
+            Write-Warning -Message "Attention you are forced to delete your device. Please read the following steps carefully."
+            Reset-IWDevice
+            exit
         }
 
         if ($DeviceData.Disknumber -and $DeviceData.EFIPartitionNumber -and $DeviceData.BasicPartitionNumber) {
