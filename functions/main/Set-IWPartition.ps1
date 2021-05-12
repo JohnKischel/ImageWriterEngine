@@ -20,7 +20,7 @@ function Set-IWPartition {
         # Sets the label of the device
         [Parameter(ParameterSetName = "WindowsPartition")]
         [ValidateLength(1,10)]
-        [string]$LabelName = "IWE",
+        [string]$LabelName,
 
         #Switch to create a Partition with predefined guid {e3c9e316-0b5c-4db8-817d-f92df00215ae}
         [Parameter(ParameterSetName = "MSRPartition")]
@@ -32,15 +32,19 @@ function Set-IWPartition {
     )
 
     begin {
+        if([string]::IsNullOrEmpty($LabelName)){
+            $LabelName = "IWE_{0}" -f (Get-Date -f dd-MM-yyyy)
+        }
+
     }
 
     process {
         switch ($PSCmdlet.ParameterSetName) {
             WindowsPartition {
 
-                New-Partition -InputObject $InputObject -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows) -Size $Size -DriveLetter $DriveLetter -ErrorVariable Err -ErrorAction Stop | Out-Null
+                New-Partition -InputObject $InputObject -GptType $(Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows) -DriveLetter $DriveLetter -Size $Size -ErrorVariable Err -ErrorAction Stop | Out-Null
                 if ($Err[0]) {
-                    throw 'Could create a new basic partition.'                  
+                    throw 'Could not create a new basic partition.'                  
                 }
 
                 Write-PSFMessage -Level Verbose -Message ("Set WindowsPartition with GUID {0} on [ {1} - Serialnumber: {2} ]" -f (Get-PSFConfigValue -FullName ImageWriterEngine.Partition.Windows), $InputObject.FriendlyName, $InputObject.SerialNumber) -Tag 'Partition'
