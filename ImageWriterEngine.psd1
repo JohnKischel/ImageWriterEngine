@@ -57,6 +57,7 @@
 		"Get-IWDevicePartitions",
 		"Get-IWProgress",
 		"Add-IWEFIFile",
+		"Reset-IWDevice",
 		"Dismount-IWImage",
 		'Copy-IWImage'
 		'New-IWNotification'
