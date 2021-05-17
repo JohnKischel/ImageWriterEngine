@@ -19,7 +19,7 @@ function Set-IWPartition {
 
         # Sets the label of the device
         [Parameter(ParameterSetName = "WindowsPartition")]
-        [ValidateLength(1,10)]
+        [ValidateLength(1,15)]
         [string]$LabelName,
 
         #Switch to create a Partition with predefined guid {e3c9e316-0b5c-4db8-817d-f92df00215ae}
