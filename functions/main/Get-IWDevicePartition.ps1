@@ -26,8 +26,8 @@ function Get-IWDevicePartitions {
         
         if(($DeviceData.BasicPartitionNumber).Count -ne 1)
         {
-            Write-Warning -Message "Attention you are forced to delete your device. Please read the following steps carefully."
-            Reset-IWDevice
+            Write-Warning -Message "Attention you are forced to delete your device. Please read the following steps carefully. "
+            Start-Job -ScriptBlock{Reset-IWDevice} | Wait-Job
             exit
         }
 
