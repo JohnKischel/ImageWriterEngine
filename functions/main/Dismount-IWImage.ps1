@@ -5,12 +5,12 @@ function Dismount-IWImage {
         [Parameter(HelpMessage = "Path of the isofile.")]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ImagePath = (Get-PSFConfigValue ImageWriterEngine.Session.DiskImagePath)
+        $ImagePath
     )
 
-    begin {
-        if (-not ($ImagePath -match ".+\.iso") -or -not (Test-Path -Path $ImagePath)) {
-            throw ("Path doesnt match '.+\.iso' or is not available.")
+    begin { 
+        if(-not (Test-Path $ImagePath)){
+            throw "ImagePath is not valid."
         }
     }
 
