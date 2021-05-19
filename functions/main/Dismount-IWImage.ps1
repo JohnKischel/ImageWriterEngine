@@ -21,6 +21,6 @@ function Dismount-IWImage {
         }until(!$result)
     }
     end {
-        
+        if(!$result){return 0}
     }
 }

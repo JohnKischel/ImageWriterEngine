@@ -347,3 +347,6 @@ test
 configuration.json
 Set-IWDevice.ps1
 .vscode
+testfile.ps1
+bin/session/
+bin/log/

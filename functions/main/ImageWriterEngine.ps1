@@ -1,29 +1,39 @@
 function Start-ImageWriterEngine {
     [CmdletBinding()]
     param (
-        [Parameter(HelpMessage = "Path of the isofile.")]
+        [Parameter(Position = 0, HelpMessage = "Path of the isofile.")]
         [String]
         $ImagePath,
 
-        [Parameter(HelpMessage = "Select your DriveLetter from A-Z. Format example: Valid(C,D,E) Not valid (C:\,D:\,E:\ or C:,D:,E:")]
+        [Parameter(Position = 1, HelpMessage = "Select your DriveLetter from A-Z. Format example: Valid(C,D,E,C:\,D:\,E:\,C:,D:,E:")]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern('[A-Za-z]')]
-        [Char]
         $DriveLetter,
 
+        [Parameter(Position = 2, HelpMessage = 'Location of the ConfigFile')]
+        [string]
+        $ConfigFile = "config.yaml",
+
+        [Parameter(Position = 3, HelpMessage = 'Show progress while installing consider using verbose.')]
         [switch]
         $NoProgress
     )
+
     begin {
 
         $ErrorActionPreference = "STOP"
 
+        # Validate inputs
+        Test-DriveLetter -DriveLetter $DriveLetter
+        if (-not (ValidatePath -Path $ImagePath)) { exit }
+        if (-not (ValidatePath -Path $ConfigFile)) { exit }
+        
+        # Load the config file
+        Get-IWConfig -ConfigFile $ConfigFile -SetAsEnvironmentVariable
+        $Script:IWConfig.image.imagepath = $ImagePath
+
         # Dismount previous images.
-        if ($ImagePath) { Dismount-IWImage -ImagePath $ImagePath }
-
-        # Set global imagepath
-        Set-PSFConfig -Name 'ImageWriterEngine.Session.DiskImagePath' -Value $ImagePath
-
+        if (Dismount-IWImage -ImagePath $ImagePath) { $Script:IWConfig.image.mounted = $false }
+        
         # Stop Hardware detection service.
         Set-IWHardwareDetection -Stop
 
@@ -33,35 +43,38 @@ function Start-ImageWriterEngine {
 
     process {
 
-        #Create file folder structure.
-        if (-not (Test-Path (Get-PSFConfigValue ImageWriterEngine.Session.Path))) {
-            [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue ImageWriterEngine.Session.Path)) | Out-Null
+        if ([string]::IsNullOrEmpty($Script:IWConfig.workingdirectory)) {
+            $Script:IWConfig.workingdirectory = Join-Path -Path $Script:ModuleRoot -ChildPath "bin/session"
         }
-        if (-not (Test-Path (Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath))) {
-            [System.IO.Directory]::CreateDirectory((Get-PSFConfigValue -FullName PSFramework.Logging.FileSystem.LogPath)) | Out-Null        
+
+        if ([string]::IsNullOrEmpty($Script:IWConfig.logging.logpath)) {
+            $Script:IWConfig.logging.logpath = Join-Path -Path $Script:ModuleRoot -ChildPath "bin/log"
         }
-        # Remove the -Secure to select other drives than usb.
-        Get-IWDevice -DriveLetter $DriveLetter -Secure | Out-Null
+
+        # Remove the -Secure to select other drives than usb. Get-IWDevices return an array.
+        $Script:IWConfig.device.driveletter, $Script:IWConfig.device.volumeobject = Get-IWDevice -DriveLetter $DriveLetter -Secure
 
         # Mount Image
-        Mount-IWImage | Out-Null
-
-        # if the image size exceeds the drivesize an error is thrown.
-        if (-not ((Get-IWDevice -DriveLetter $DriveLetter | Get-Partition | Where-Object { $_.DriveLetter -eq "$DriveLetter" }).Size -ge (Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size)) {
+        if ($Script:IWConfig.image.mounted -eq $false) {
+            $Script:IWConfig.image.driveletter, $Script:IWConfig.image.volumeobject = Mount-IWImage -ImagePath $Script:IWConfig.image.imagepath -ignoreWinPE
+        }
+        
+        # If the image size exceeds the drivesize an error is thrown.
+        if (-not ($Script:IWConfig.device.volumeobject | Get-Partition).Size -ge $Script:IWConfig.device.constraints.minSize ) {
             Dismount-IWImage
             Get-IWDevice -DriveLetter $DriveLetter | Start-IWPrepareDevice
             New-IWNotification -Message ("Preparing volume {0}" -f $DriveLetter)
-            #throw 'Not enough available capacity.'
+            # throw 'Not enough available capacity.'
         }
 
         if (-not (Get-IWDevicePartitions -DriveLetter $DriveLetter)) {
             Get-IWDevice -DriveLetter $DriveLetter | Start-IWPrepareDevice
         }
+
         # Copy image to selected device.
         New-IWNotification -Message ("Started. Transfer image.")
         Copy-IWImage
 
-        
         do {
             if (-not($NoProgress.IsPresent)) {
                 Get-IWProgress
@@ -71,8 +84,7 @@ function Start-ImageWriterEngine {
         try {
             # Write Bootmanager,Bootlader,Ramdisk and EFIfile to the EFI Partition.
             Initialize-IWBootConfigurationData -DriveLetter $DriveLetter
-        }
-        catch {
+        } catch {
             $_.Exception
         }
     }

@@ -7,15 +7,13 @@ function Start-IWPrepareDevice
 
         # This parameter represents the final DriveLetter after installing the Image.
         [Parameter(ValueFromPipeline)]
-        [AllowEmptyString()]
-        [ValidatePattern('[A-Za-z]')]
-        [Char]
-        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
+        $DriveLetter
     )
     
     begin
     {
-        if([String]::IsNullOrWhiteSpace($DriveLetter) -or (Test-Path -Path $DriveLetter))
+        $DriveLetter = Test-DriveLetter $DriveLetter
+        if((Test-Path -Path $DriveLetter))
         {
             $DriveLetter = $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString()
             # Set new evaluated driveletter to override the stored old one.

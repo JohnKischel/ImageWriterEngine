@@ -2,17 +2,12 @@ function Get-IWDevicePartitions {
     param(
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern('[A-Za-z]')]
-        [char]
-        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
-
+        $DriveLetter
     )
 
-    begin {      
-        if (-not (Test-Path -Path $("{0}:\" -f $DriveLetter))) {
-            throw ("{0}:\ was not found as path." -f $DriveLetter)
-        }
+    if(-not(Test-DriveLetter -DriveLetter $DriveLetter)){exit}
 
+    begin {      
         $Disknumber = (Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk).Number
         $PartitionList = Get-Partition -DiskNumber $Disknumber
     }
@@ -24,10 +19,9 @@ function Get-IWDevicePartitions {
             BasicPartitionNumber = ($PartitionList | Where-Object { $_.Type -eq "Basic" }).PartitionNumber
         }
         
-        if(($DeviceData.BasicPartitionNumber).Count -ne 1)
-        {
+        if (($DeviceData.BasicPartitionNumber).Count -ne 1) {
             Write-Warning -Message "Attention you are forced to delete your device. Please read the following steps carefully. "
-            Start-Job -ScriptBlock{Reset-IWDevice} | Wait-Job
+            Start-Job -ScriptBlock { Reset-IWDevice } | Wait-Job
             exit
         }
 
@@ -35,8 +29,7 @@ function Get-IWDevicePartitions {
             if ($PartitionList.Type.Contains("Basic") -and $PartitionList.Type.Contains("Reserved") -and $PartitionList.Type.Contains("System")) {
                 Set-PSFConfig -Name ImageWriterEngine.Session.DevicePartition -Value $DeviceData
                 return $DeviceData
-            }
-            else {
+            } else {
                 throw 'Missing required partition.'
             }
         }

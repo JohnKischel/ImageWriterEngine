@@ -4,9 +4,7 @@ function Get-IWDevice {
         # Device DriveLetter
         [Parameter(ParameterSetName = "ByDriveLetter")]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern('[A-Za-z]')]
-        [char]
-        $DriveLetter,
+        [string]$DriveLetter,
 
         # Use this switch to ignore everything except Removeable devices.
         [Parameter(ParameterSetName = "ByDriveLetter")]
@@ -21,11 +19,19 @@ function Get-IWDevice {
         # select this switch to list all drives with driveletter.
         [Parameter(ParameterSetName = "ListAll")]
         [switch]
-        $ListAll
+        $ListAll,
+
+        # select this switch to list all drives with driveletter.
+        [Parameter(ParameterSetName = "NextDriveLetter")]
+        [switch]
+        $NextDriveLetter
     )
     
     begin {
-
+        if(-not $NextDriveLetter.IsPresent){
+            $DriveLetter = Test-DriveLetter -DriveLetter $DriveLetter
+        }
+        
     }
     
     process {
@@ -41,19 +47,12 @@ function Get-IWDevice {
 
                 if ($Secure.IsPresent) {
                     $InputObject = Get-Volume | Where-Object { $_.DriveLetter -eq $DriveLetter -and $_.DriveType -eq "Removable" } | Get-Partition | Get-Disk
-                    if ($InputObject) {
-                        return $InputObject
-                    }
-                    else {
+                    if (-not $InputObject) {
                         throw 'Object returned was null'
                     }
-                }
-                else {
+                } else {
                     $InputObject = Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk
-                    if ($InputObject) {
-                        return $InputObject
-                    }
-                    else {
+                    if (-not $InputObject) {
                         throw 'Object returned was null'
                     }
                 }
@@ -62,10 +61,7 @@ function Get-IWDevice {
             # Get the disk by disknumber.
             "ByDiskNumber" {
                 $InputObject = Get-Disk -Number $DiskNumber -ErrorAction 0
-                if ($InputObject) {
-                    return $InputObject
-                }
-                else {
+                if (-not $InputObject) {
                     throw 'Object returned was null'
                 }
             }
@@ -75,10 +71,16 @@ function Get-IWDevice {
                 Get-Volume | Where-Object { $_.DriveLetter } | Format-Table @{Label = "DriveLetter"; Expression = { $_.DriveLetter } }, @{Label = "FriendlyName"; Expression = { $_.FileSystemLabel } }, @{Label = "Size"; Expression = { $_.Size } }
                 Get-Disk | Format-Table @{Label = "DiskNumber"; Expression = { $_.DiskNumber } }, @{Label = "FriendlyName"; Expression = { $_.FriendlyName } }
             }
+
+            # Next free volume letter
+            "NextDriveLetter"
+            {
+                return $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString().ToLower()
+            }
         }
     }
+
     end {
-            Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DriveLetter' -Value $DriveLetter
-            Set-PSFConfig -Module 'ImageWriterEngine' -Name 'Session.DeviceInputObject' -Value $InputObject
+        return @($DriveLetter, $InputObject)
     }
 }

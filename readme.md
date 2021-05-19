@@ -13,7 +13,7 @@ Download the latest release.
 
     or use 
 
-- > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git --recurse-submodules```
+- > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git```
 
 ## How to use.
 ---
