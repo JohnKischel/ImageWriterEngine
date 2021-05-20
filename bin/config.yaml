@@ -1,0 +1,37 @@
+# Common settings - defaults
+loaded: false
+
+image:
+ mounted: false
+ driveletter:
+ imagepath:
+ volumeobject:
+device:
+ labelname: "IWE"
+ driveletter:
+ newdriveletter:
+ volumeobject:
+ constraints:
+  minsize: 45
+ partitions:
+
+mountpath: 'C:\temp\'
+workingdirectory:
+
+# Preconfigured partition guids
+partitiontype:
+ windows: '{ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}'
+ efi: '{c12a7328-f81f-11d2-ba4b-00a0c93ec93b}'
+ msr: '{e3c9e316-0b5c-4db8-817d-f92df00215ae}'
+ 
+# EFI configuration (Pathes)
+defaultpathes:
+ efipath: '\EFI\Boot'
+ storepath: 'EFI\Microsoft\Boot'
+
+# Logging
+logging:
+ logpath: 'C:\temp\ImageWriterEngine\'
+ defaultfilename: "transfer.txt"
+
+extended:
