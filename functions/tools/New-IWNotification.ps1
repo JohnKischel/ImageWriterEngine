@@ -1,5 +1,4 @@
-function New-IWNotification
-{
+function New-IWNotification {
     [CmdletBinding()]
     param (
 
@@ -16,7 +15,7 @@ function New-IWNotification
     )
     Add-Type -AssemblyName System.Windows.Forms
     $global:notify = New-Object System.Windows.Forms.NotifyIcon
-    $path = (Get-Process -id $pid).Path
+    $path = (Get-Process -Id $pid).Path
     $notify.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($path)
     $notify.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::Info
     $notify.BalloonTipText = $Message
