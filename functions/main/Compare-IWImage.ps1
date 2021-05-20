@@ -10,7 +10,7 @@ function Compare-IWImage {
     )
 
     if ($ReferenceImage -eq $DifferenceImage) {
-        Write-PSFMessage -Level Host -Message "Pathes are identically no need to verify." -Tag 'Image'
+        # Add log "Pathes are identically no need to verify."
         return $true
     }
     
@@ -18,10 +18,10 @@ function Compare-IWImage {
     $DifferenceObject = Get-FileHash -Path $DifferenceImage
 
     if (-not (Compare-Object -ReferenceObject $ReferenceObject.Hash -DifferenceObject $DifferenceObject.Hash)) {
-        Write-PSFMessage -Level Host -Message "The local and the remote iso is identically." -Tag 'Image'
+        # Add log "The local and the remote iso is identically."
         return $true
     } else {
-        Write-PSFMessage -Level Host -Message "The local and the remote iso is different." -Tag 'Image'
+        # Add log "The local and the remote iso is different."
         return $false
     }
 }

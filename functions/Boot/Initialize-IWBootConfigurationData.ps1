@@ -16,15 +16,15 @@ function Initialize-IWBootConfigurationData {
     # Multiple functions from the scripts are executed in the given order to prepare the device wich is specified.
     process {
 
-        Write-PSFMessage -Level Verbose -Message "Invoke Add-IWEFile"
+        # Add log "Invoke Add-IWEFile"
         Add-IWEFIFile -DriveLetter $DriveLetter
-        Write-PSFMessage -Level Verbose -Message "Invoke New-IWBootManager"
+        # Add log "Invoke New-IWBootManager"
         New-IWBootManager  -DriveLetter $DriveLetter -Force
-        Write-PSFMessage -Level Verbose -Message "Invoke Add-IWRamdisk"
+        # Add log "Invoke Add-IWRamdisk"
         Add-IWRamdisk -DriveLetter $DriveLetter
-        Write-PSFMessage -Level Verbose -Message "Invoke Add-IWBootLoader"
+        # Add log "Invoke Add-IWBootLoader"
         $Identifier = Add-IWBootLoader -DriveLetter $DriveLetter
-        Write-PSFMessage -Level Verbose -Message "Invoke Set-IWBootloader"
+        # Add log "Invoke Set-IWBootloader"
         Set-IWBootloader -DriveLetter $DriveLetter -Identifier $Identifier
     }
     

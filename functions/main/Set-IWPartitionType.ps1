@@ -2,7 +2,7 @@ function Set-IWPartitionType {
     param(
         #Input Object should be parsed from Get-IWDevice
         [Parameter(ValueFromPipeline)]
-        $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject)
+        $InputObject
     )
 
     begin {
@@ -11,18 +11,16 @@ function Set-IWPartitionType {
     process {
         try {
             Clear-Disk -RemoveData -Confirm:$false -InputObject $InputObject -RemoveOEM -ErrorAction Stop
-            Write-PSFMessage -Level Verbose -Message ("Device {0} with serialnumber {1} cleaned." -f $InputObject.FriendlyName, $InputObject.SerialNumber)
-        }
-        catch {
+            # Add log "Device {0} with serialnumber {1} cleaned."
+        } catch {
             throw "Failure while cleaning the disk."
         }
         
         if ($InputObject.PartitionStyle -ne "GPT") {
             try {
                 Set-Disk -PartitionStyle GPT -InputObject $InputObject -ErrorAction Stop
-                Write-PSFMessage -Level Verbose -Message ("Device {0} is now GPT" -f $InputObject.FriendlyName)
-            }
-            catch {
+                # Add log "Device {0} is now GPT"
+            } catch {
                 throw "Failure while setting the Device to GPT."
             }
         }

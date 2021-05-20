@@ -20,7 +20,7 @@ function Remove-IWBootConfigurationData {
     process {
         try {
             Remove-Item -Path $StorePath -Recurse -Force
-            Write-PSFMessage -Level Verbose -Message "BootConfigurationData deleted." -Tag Bootloader
+            # Add log "BootConfigurationData deleted."
         }
         catch {
             throw $_.Exception

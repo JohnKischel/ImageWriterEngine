@@ -24,7 +24,7 @@ function Add-IWBootLoader {
     process {
         $guid = bcdedit /store $StorePath /create /d $BootLoaderName /application osloader
         $Identifier = [regex]::Matches($guid, "\w{0,8}-\w{0,4}-\w{0,4}-\w{0,4}-\w{0,12}").Value
-        Write-PSFMessage -Level Verbose -Message ("Bootloader added with identifier {0}" -f $Identifier) -Tag "Bootloader"
+        # Add log "Bootloader added with identifier {0}" -f $Identifier"
         return $Identifier
     }
 

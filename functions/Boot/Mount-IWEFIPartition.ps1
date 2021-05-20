@@ -38,7 +38,7 @@ function Mount-IWEFIPartition {
                 throw 'Could not mount EFIPartition.'
             }
         }
-        Write-PSFMessage -Level Verbose -Message ("Mounted EFIPartition to {0}" -f $MountPath) -Tag 'EFIPartition'
+       # Add log "Mounted EFIPartition to {0}" -f $MountPath
         Set-PSFConfig -FullName ImageWriterEngine.Session.isMounted -Value 1
     }
 
