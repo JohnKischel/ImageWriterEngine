@@ -13,7 +13,7 @@ function Get-IWConfig {
     if ([System.IO.Path]::IsPathRooted($ConfigFile)) {
         $pathIsValid = (Test-Path $ConfigFile) 
     } else {
-        $ConfigFile = (Get-ChildItem $Script:ModuleRoot -Recurse -Filter $ConfigFile).Fullname
+        $ConfigFile = (Get-ChildItem $script:ModuleRoot -Recurse -Filter $ConfigFile).Fullname
         $pathIsValid = (Test-Path $ConfigFile)
     }
    
@@ -25,6 +25,7 @@ function Get-IWConfig {
 
     if ($SetAsEnvironmentVariable.IsPresent) {
         Set-Variable -Name IWConfig -Value $config -Scope Script
+        $Script:IWConfig.loaded = $true
     }
     
     if ([string]::IsNullOrEmpty($config)) {
