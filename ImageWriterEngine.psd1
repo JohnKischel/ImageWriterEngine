@@ -43,38 +43,38 @@
 	
 	# Functions to export from this module
 	FunctionsToExport = @(
-	"Add-IWEFIFile",
-	"Compare-IWImage",
-	'Copy-IWImage'
-	"Dismount-IWImage",
-	"Get-IWDevice",
-	"Get-IWConfig",
-	"Get-IWProgress",
-	"Get-IWDevicePartitions",
-	"Mount-IWImage",
-	'New-IWNotification'
-	"Reset-IWDevice",
-	"Set-IWHardwareDetection",
-	"Set-IWPartition",
-	"Set-IWPartitionType",
-	"Start-IWImageTransfer",
-	"Start-IWPrepareDevice",
-	'Start-ImageWriterEngine',
+		"Add-IWEFIFile",
+		"Compare-IWImage",
+		'Copy-IWImage'
+		"Dismount-IWImage",
+		"Get-IWDevice",
+		"Get-IWConfig",
+		"Get-IWProgress",
+		"Get-IWDevicePartitions",
+		"Mount-IWImage",
+		'New-IWNotification'
+		"Reset-IWDevice",
+		"Set-IWHardwareDetection",
+		"Set-IWPartition",
+		"Set-IWPartitionType",
+		"Start-IWImageTransfer",
+		"Start-IWPrepareDevice",
+		'Start-ImageWriterEngine',
 
-	# Boot
-	"Add-IWBootloader",
-	"Add-IWRamdisk",
-	"Dismount-IWEFIPartition",
-	"Mount-IWEFIPartition",
-	"New-IWBootManager",
-	"Set-IWBootLoader",
-	"Initialize-IWBootConfigurationData",
-	"Get-IWBootConfigurationData",
-	"Remove-IWBootConfigurationData",
+		# Boot
+		"Add-IWBootloader",
+		"Add-IWRamdisk",
+		"Dismount-IWEFIPartition",
+		"Mount-IWEFIPartition",
+		"New-IWBootManager",
+		"Set-IWBootLoader",
+		"Initialize-IWBootConfigurationData",
+		"Get-IWBootConfigurationData",
+		"Remove-IWBootConfigurationData",
 
-	# Validation
-	'Test-DriveLetter',
-	'ValidatePath'
+		# Validation
+		'Test-DriveLetter',
+		'ValidatePath'
 	)
 	
 	# Cmdlets to export from this module

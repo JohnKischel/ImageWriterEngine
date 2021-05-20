@@ -10,6 +10,6 @@ function Import-ModuleFile {
 	Import-Module $File	-Verbose
 }
 
-foreach($file in Get-ChildItem -File "$script:ModuleRoot/functions/" -Recurse){
+foreach ($file in Get-ChildItem -File "$script:ModuleRoot/functions/" -Recurse) {
 	. $file.FullName
 }
