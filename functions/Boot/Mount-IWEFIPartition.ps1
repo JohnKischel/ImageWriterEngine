@@ -2,44 +2,45 @@ function Mount-IWEFIPartition {
 
     param (
         [Parameter()]
-        [ValidatePattern('[A-Za-z]')]
-        [char]
-        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter),
-        # Path where the EFIpartition should be mounted
+        [string]
+        $MountPath,
         [Parameter()]
         [string]
-        $MountPath = (Get-PSFConfigValue ImageWriterEngine.Session.MountPath),
+        $DiskNumber,
         [Parameter()]
         [string]
-        $DiskNumber = (Get-PSFConfigValue ImageWriterEngine.Session.DevicePartition).Disknumber,
+        $PartitionNumber,
         [Parameter()]
-        [string]
-        $PartitionNumber = (Get-PSFConfigValue ImageWriterEngine.Session.DevicePartition).EFIPartitionNumber
+        [switch]
+        $Unmount
     )
     
     begin {
-
         $PartitionType = (Get-Partition -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber).Type
         if ($PartitionType -ne 'System') {
             throw ("Partition type is {0} bit Type 'System' is expected." -f $PartitionType)
         }
 
         if (-not (Test-Path $MountPath)) { [System.IO.Directory]::CreateDirectory($MountPath) | Out-Null }
-
     }
 
     # The EFI partition of the given device will be mounted.
     process {
-        if((Get-PSFConfigValue ImageWriterEngine.Session.isMounted) -eq 1) {break}
-        # Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
-        if (-not (Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru -ErrorAction 0)) {
-            Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru
-            if ( -not (Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru -ErrorAction 0)) {
-                throw 'Could not mount EFIPartition.'
+        if (-not $Unmount.isPresent) {
+            if (-not (Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru -ErrorAction 0)) {
+                Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru
+                throw "Could not mount efi partition."
+            } else {
+                # Successfully mounted
+                return 0
+            }
+        } else {
+            try{
+                Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $MountPath -PassThru | Out-Null
+            }catch{
+                throw "Could not unmount. Maybe the access path is unmounted?"
             }
         }
-       # Add log "Mounted EFIPartition to {0}" -f $MountPath
-        Set-PSFConfig -FullName ImageWriterEngine.Session.isMounted -Value 1
     }
 
     end { }

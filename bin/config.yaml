@@ -2,7 +2,7 @@
 loaded: false
 
 image:
- mounted: false
+ ismounted: false
  driveletter:
  imagepath:
  volumeobject:
@@ -15,7 +15,6 @@ device:
   minsize: 45
  partitions:
 
-mountpath: 'C:\temp\'
 workingdirectory:
 
 # Preconfigured partition guids
@@ -25,13 +24,15 @@ partitiontype:
  msr: '{e3c9e316-0b5c-4db8-817d-f92df00215ae}'
  
 # EFI configuration (Pathes)
-defaultpathes:
+bootloader:
  efipath: '\EFI\Boot'
- storepath: 'EFI\Microsoft\Boot'
+ storepath: 'EFI\Microsoft\Boot\BCD'
+ mountpath: 'C:\temp\mnt'
+ ismounted:false
 
 # Logging
 logging:
- logpath: 'C:\temp\ImageWriterEngine\'
+ logpath: 'C:\temp\'
  defaultfilename: "transfer.txt"
 
 extended:

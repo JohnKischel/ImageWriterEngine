@@ -1,12 +1,13 @@
 function Get-IWProgress {
     param(
         [Parameter()]
-        [ValidatePattern('[A-Za-z]')]
-        [char]
-        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter)
+        $DriveLetter
     )
 
-    begin { 
+    begin {
+        
+        if([string]::IsNullOrEmpty($DriveLetter)){throw "DriveLetter was empty."}
+        
         $x = [Console]::CursorLeft
         $y = [Console]::CursorTop
     }
@@ -17,7 +18,6 @@ function Get-IWProgress {
         if ($Output -ne $Lastoutput) {
             $Lastoutput = $Output
         }
-
     }
     
     end {
@@ -27,6 +27,6 @@ function Get-IWProgress {
         Write-Host ("{0:f2}" -f (($Size.Size - 1Gb)/1GB)) -ForegroundColor Green -NoNewline
         Write-Host (" ]" -f $Output) -ForegroundColor White -NoNewline
         $Host.UI.RawUI.CursorPosition = @{ X = $x; Y = $y}
-        Start-Sleep -Seconds 1
+        Start-Sleep -Seconds 5
     }
 }

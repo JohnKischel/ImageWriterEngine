@@ -23,12 +23,8 @@ function Get-IWDevicePartitions {
         
         # When the partition does not match try to reset / clean the device.
         if (($DeviceData.BasicPartitionNumber).Count -ne 1) {
-            Write-Warning -Message "Attention you are forced to delete your device. Please read the following steps carefully. "
-            try {
-                Reset-IWDevice
-            } catch {
-                throw "Reset Device failed"
-            }
+            # 1 indicates that the device needs to be reseted.
+            return 1
         }
 
         # Check if all partitions are available.

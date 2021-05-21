@@ -1,37 +1,32 @@
-function Start-IWPrepareDevice
-{
+function Start-IWPrepareDevice {
     param(
         # This InputObject should be passed from Get-IWDevice
         [Parameter(ValueFromPipeline)]
-        $InputObject = (Get-PSFConfigValue ImageWriterEngine.Session.DeviceInputObject),
+        $InputObject,
 
         # This parameter represents the final DriveLetter after installing the Image.
         [Parameter(ValueFromPipeline)]
         $DriveLetter
     )
     
-    begin
-    {
-        $DriveLetter = Test-DriveLetter $DriveLetter
-        if((Test-Path -Path $DriveLetter))
-        {
-            $DriveLetter = $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString()
-            # Set new evaluated driveletter to override the stored old one.
-            Set-PSFConfig ImageWriterEngine.Session.DriveLetter -Value $DriveLetter
-        }
+    begin {
+        if (-not $Script:IWConfig.loaded) { throw "Script not loaded." }
+        $Script:IWConfig.device.newdriveletter = $driveletter = Get-IWDevice -NextDriveLetter
     }
 
-    process
-    {
-        Write-PSFMessage -Level Verbose -Message "Started IWPrepareDevice"
-        $InputObject | Set-IWPartitionType
-        $InputObject | Set-IWPartition -WindowsPartition -DriveLetter $DriveLetter -Size ([uint64]((Get-PSFConfigValue ImageWriterEngine.Session.DiskImage).Size) + 1GB)
-        $InputObject | Set-IWPartition -MSRPartition
-        $InputObject | Set-IWPartition -EfiPartition
+    process {
+        # Add log "Started IWPrepareDevice"
+        Set-IWPartitionType -InputObject $Script:IWConfig.device.volumeobject
+        Set-IWPartition -MSRPartition -InputObject $Script:IWConfig.device.volumeobject
+        Set-IWPartition -WindowsPartition `
+            -DriveLetter $Script:IWConfig.device.newdriveletter `
+            -InputObject $Script:IWConfig.device.volumeobject `
+            -LabelName $Script:IWConfig.device.labelname
+
+        Set-IWPartition -EfiPartition -InputObject $Script:IWConfig.device.volumeobject
     }
 
-    end 
-    {
-        Get-IWDevicePartitions -DriveLetter $DriveLetter | Out-Null
+    end {
+        return (Get-IWDevicePartitions -DriveLetter $Script:IWConfig.device.newdriveletter)
     }
 }

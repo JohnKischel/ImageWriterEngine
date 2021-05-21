@@ -28,14 +28,12 @@ function Get-IWDevice {
     )
     
     begin {
-        if(-not $NextDriveLetter.IsPresent){
+        if (-not $NextDriveLetter.IsPresent) {
             $DriveLetter = Test-DriveLetter -DriveLetter $DriveLetter
         }
-        
     }
     
     process {
-        
         switch ($PSCmdlet.ParameterSetName) {
 
             #Gets the volume with specific driveletter.
@@ -73,10 +71,10 @@ function Get-IWDevice {
             }
 
             # Next free volume letter
-            "NextDriveLetter"
-            {
-                return $((69..90 | ForEach-Object { if ( -not $(Test-Path $("{0}:" -f $([char]$_)))) { [char]$_ } })[0]).toString().ToLower()
+            "NextDriveLetter" {
+                return Get-WmiObject win32_logicaldisk | Select-Object -ExpandProperty DeviceID -Last 1 | ForEach-Object { [char]([int][char]$_[0] + 1) }
             }
+
         }
     }
 

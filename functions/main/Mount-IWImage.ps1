@@ -11,7 +11,7 @@ function Mount-IWImage {
     )
 
     begin {
-        if (-not (ValidatePath -Path $ImagePath)) { exit }
+        if (-not (ValidatePath -Path $ImagePath)) { throw "Could not validate imagepath." }
         Dismount-IWImage -ImagePath $ImagePath | Out-Null
     }
 
@@ -38,6 +38,6 @@ function Mount-IWImage {
     }
 
     end { 
-        return $InputObject.DriveLetter,$InputObject
+        return $InputObject.DriveLetter, $InputObject
     }
 }

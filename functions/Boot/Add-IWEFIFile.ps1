@@ -2,26 +2,26 @@ function Add-IWEFIFile {
     [CmdletBinding()]
     param (
         # Location where to look for bootx64.efi
-        [char]
-        [ValidatePattern('[A-Za-z]')]
-        $DriveLetter = (Get-PSFConfigValue ImageWriterEngine.Session.DriveLetter),
+        [Parameter(HelpMessage = "Location where to look for bootx64.efi")]
+        $Source,
 
         # Destination of the EFIPartition and Path to place the efifile.
         [string]
-        $EFIFilePath = (Get-PSFConfigValue ImageWriterEngine.Session.EFIPath)
+        $Destination
     )
-    
+
     begin {
-        Mount-IWEFIPartition -DriveLetter $DriveLetter
+        $Source = Test-DriveLetter -DriveLetter $Source
+        $FullName = ((Get-ChildItem ("{0}:\" -f $Source) -Filter bootx64.efi -Recurse) | Select-Object -First 1).FullName
+        $Source = [System.IO.Path]::GetDirectoryName($FullName)
     }
     
-    # Robocopy take care of the image transfer and copies the EFIFile from the iso tho the predefined EFIFilepath.
     process {
-        Robocopy ("{0}:\Deploy\Boot\x64\EFI\Boot" -f $DriveLetter) $EFIFilePath bootx64.efi /S /MIR /E /W:1 /R:2 | Out-Null
+        # Robocopy take care of the image transfer and copies the EFIFile from the iso tho the predefined EFIFilepath.
+        Robocopy $Source $Destination bootx64.efi /S /MIR /E /W:1 /R:2 | Out-Null
         # Add log "EFIFile copied to EFI partition."
     }
     
     end {
-        Dismount-IWEFIPartition -DriveLetter $DriveLetter
     }
 }
