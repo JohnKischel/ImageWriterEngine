@@ -39,7 +39,7 @@ function Set-IWPartition {
         switch ($PSCmdlet.ParameterSetName) {
             WindowsPartition {
 
-                New-Partition -InputObject $InputObject -GptType $Script:IWConfig.partitiontype.windows -DriveLetter $DriveLetter -Size $Size -ErrorVariable Err -ErrorAction Stop | Out-Null
+                
                 if ($Err[0]) {
                     throw 'Could not create a new basic partition.'                  
                 }
