@@ -18,12 +18,8 @@ class DeviceFactory {
     }
 
     clear_device(){
-        try{
             Clear-Disk -RemoveData -Confirm:$false -InputObject $this.Device.VolumeObject -RemoveOEM -ErrorAction Stop
             $this.isCleared = 0
-        }catch{
-            throw "Failure while cleaning the disk."
-        }
     }
 
     set_partition_style($type){
@@ -219,12 +215,22 @@ class PartitionAccessPath:IMountProcessor{
 
     PartitionAccessPath([DeviceCollector]$Device,$MountPath,$PartitionType){
         $this.Device = $Device
+
+        if(-not (Test-Path $MountPath)){
+            [System.IO.Directory]::CreateDirectory($MountPath)
+        }
+
         $this.MountPath = $MountPath
         $this.PartitionType = $PartitionType
     }
 
     PartitionAccessPath([DeviceCollector]$Device,$MountPath){
         $this.Device = $Device
+
+        if(-not (Test-Path $MountPath)){
+            [System.IO.Directory]::CreateDirectory($MountPath)
+        }
+        
         $this.MountPath = $MountPath
     }
 
@@ -313,7 +319,7 @@ class Store2PartitionWriter:DataWriter {
 
     write_data(){
         [System.IO.Directory]::CreateDirectory($this.Destination)
-        Copy-Item -Path $this.FilePath -Destination $this.Destination -Verbose
+        Copy-Item -Path $this.FilePath -Destination $this.Destination
     }
 }
 #endregion
