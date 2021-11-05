@@ -3,7 +3,7 @@
 	RootModule        = 'ImageWriterEngine.psm1'
 	
 	# Version number of this module.
-	ModuleVersion     = '0.7.5'
+	ModuleVersion     = '0.8.0'
 	
 	# ID used to uniquely identify this module
 	GUID              = '307f4397-8108-4952-b92c-d117d0918fad'
@@ -15,7 +15,7 @@
 	CompanyName       = 'johnkischel'
 	
 	# Copyright statement for this module
-	Copyright         = 'Copyright (c) 2020 johnKischel'
+	Copyright         = 'Copyright (c) 2021 johnKischel'
 	
 	# Description of the functionality provided by this module
 	Description       = 'Write an iso image to usb.'
@@ -43,38 +43,9 @@
 	
 	# Functions to export from this module
 	FunctionsToExport = @(
-		"Add-IWEFIFile",
-		"Compare-IWImage",
-		'Copy-IWImage'
-		"Dismount-IWImage",
-		"Get-IWDevice",
-		"Get-IWConfig",
-		"Get-IWProgress",
-		"Get-IWDevicePartitions",
-		"Mount-IWImage",
-		'New-IWNotification'
-		"Reset-IWDevice",
 		"Set-IWHardwareDetection",
-		"Set-IWPartition",
-		"Set-IWPartitionType",
-		"Start-IWImageTransfer",
-		"Start-IWPrepareDevice",
 		'Start-ImageWriterEngine',
-
-		# Boot
-		"Add-IWBootloader",
-		"Add-IWRamdisk",
-		"Dismount-IWEFIPartition",
-		"Mount-IWEFIPartition",
-		"New-IWBootManager",
-		"Set-IWBootLoader",
-		"Initialize-IWBootConfigurationData",
-		"Get-IWBootConfigurationData",
-		"Remove-IWBootConfigurationData",
-
-		# Validation
-		'Test-DriveLetter',
-		'ValidatePath'
+		'New-IWNotification'
 	)
 	
 	# Cmdlets to export from this module
