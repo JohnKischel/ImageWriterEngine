@@ -5,14 +5,6 @@ The **ImageWriterEngine** enables you to make your usbdevice bootable with your 
 
 # Where to download?
 
-Download the latest release.
-- > https://github.com/JohnKischel/ImageWriterEngine/releases
-    - For a **simple** installation download the **ImageWriterEngine.exe**
-    - For a **specific** installation where a different [module scope](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_modules?view=powershell-7#module-and-dsc-resource-locations-and-psmodulepath) is required download the ImageWriterEngine.zip and follow [Installing a module in Powershell 5.1](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-5.1>) or 
-[Installing a module in Powershell 7](https://docs.microsoft.com/de-de/powershell/scripting/developer/module/installing-a-powershell-module?view=powershell-7)
-
-    or use 
-
 - > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git```
 
 ## How to use.
@@ -21,39 +13,33 @@ Download the latest release.
 Note:
 - Administrator privileges are required for all following steps.
 ```
-Open a WindowsPowershell as Administrator.
+Click Start, type PowerShell, right-click Windows PowerShell, and then click Run as administrator.
 
-Type in the command with your settings.
-```Powershell
-# Determine your device volume letter and replace <YOURdriveletter> with it.
-# Determine <YOURisopath> - for example my iso path is E:\MyISOs\MyWinPE.iso
+There are two steps to pre execute:
 
+1. Determine your device  **VOLUMELETTER** or your device **DISKNUMBER**
+2. Determine your iso path for example: **E:\MyISOs\MyWinPE.iso**
+
+> HINT
+
+- You can obtain the disknumber simply by executing: `Get-Disk`
+
+Example Output:
+
+| Number | Friendly | Name | Serial Number | HealthStatus | OperationalStatus | Total Size Partition | Style |
+|---|---|---|---|---|---|---|---|
+| 0 | Samsung | SSD 840 EVO 250GB |xxxxxxxxxxx|Healthy|Online|232.89 GB|GPT|                                                                                            
+| **1** | SanDisk   | Ultra |xxxxxxxxxxx|Healthy|Online|119.43 GB| GPT|   
+          
+```powershell
+# Example by DriveLetter
 Start-ImageWriterEngine -DriveLetter <YOURdriveletter> -ImagePath <YOURisopath>
 
-# Example !!! It can look like the following command
-Start-ImageWriterEngine -DriveLetter F -ImagePath 'E:\MyISOs\MyWinPE.iso'
+# Example by DriveLetter
+Start-ImageWriterEngine -DriveLetter <YOURDiskNumber> -ImagePath <YOURisopath>
+
+# Example with parameters !!! In my case, i choosed the Disknumber (see table the one is bold)
+Start-ImageWriterEngine -DiskNumber 1 -ImagePath 'E:\MyISOs\MyWinPE.iso'
 ```
 
 Press return to start the installaton.
-Verify the device formatting with return.
-
-For a more detailed output do **-Verbose**.
-
-```PowerShell
-Start-ImageWriterEngine -DriveLetter 'yourDriveLetter' -ImagePath 'yourISOPath' -Verbose
-```
-## ISO selection alternative
-You can place your iso file directly under the `$env:Programdata\ImageWriterEngine` path.
-ImageWriterEngine will check for this path.
-```diff
-Note:
-- Only one iso is supported at this time.
-```
-with this setup you can now use:
-```Powershell
-Start-ImageWriterEngine -DriveLetter <YOURdriveletter>
-
-# or 
-
-Start-ImageWriterEngine -DriveLetter <YOURdriveletter> -Verbose
-```
