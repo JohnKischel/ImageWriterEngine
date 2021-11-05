@@ -1,74 +1,87 @@
 . $PSScriptRoot\BootFactory.ps1
 . $PSScriptRoot\DeviceFactory.ps1
 
-#Get the selected device
-$dc = [DeviceCollectorByDiskNumber]::new(1)
+function Start-ImageWriterEngine
+{
+        param(
+                [Parameter(ParameterSetName = 'DiskNumber')]
+                [int]$DiskNumber,
 
-# Create all partitions.
-$wp = [WindowsPartition]::new('R',50GB)
-$ep = [EfiPartition]::new()
-$mp = [MSRPartition]::new()
-$parts = $wp,$ep,$mp
+                [Parameter(ParameterSetName = 'DriveLetter')]
+                [string]$DriveLetter,
 
-# Create a DeviceFactory to clear the device and create all overloaded partitions.
-$df = [DeviceFactory]::new($dc,$parts)
-$df.clear_device()
-$df.create_partition()
+                [string]$ImagePath = "C:\tmp\StandardImage_30062019_1929.iso"
+        )
 
-# Mount the desired ISO
-$im = [ISOImage]::new("C:\tmp\StandardImage_30062019_1929.iso")
-$im.mount()
-# Write data from the mounted iso to the selected device.
-$i2dw = [ISO2DiskWriter]::new($im.get_drive_letter(),$dc.get_drive_letter())
-$i2dw.write_data('C:\Windows\Logs\ImageWriterEngine.log')
+        switch($PsCmdlet.ParameterSetName){
+                'DiskNumber' {$dc = [DeviceCollectorByDiskNumber]::new($DiskNumber)}
+                'DriveLetter' {$dc = [DeviceCollectorByDriveLetter]::new($DriveLetter)}
+        }
+        #Get the selected device
 
-# Wait until the copy job is finished then unmount
-Get-Job -Name "ImageCopy" -ErrorAction 0 |Remove-Job -ErrorAction 0
-do {
-        Write-Host "." -NoNewline ; Start-Sleep -Seconds 5
-}while (-not ((Get-Job -Name "ImageCopy").State -eq "Completed"))
+        # Define device partition layout.
+        $wp = [WindowsPartition]::new('R',50GB)
+        $ep = [EfiPartition]::new()
+        $mp = [MSRPartition]::new()
+        $parts = $wp,$ep,$mp
 
+        # Delete device and apply partition layout.
+        $df = [DeviceFactory]::new($dc,$parts)
+        $df.clear_device()
+        $df.create_partition()
 
-# Mount the system partition to copy the bootloader
-$pap = [PartitionAccessPath]::new($dc,'C:\tmp\mnt')
-$pap.mount()
+        # Mount the desired ISO
+        $im = [ISOImage]::new($ISOPath)
+        $im.mount()
+        
+        $i2dw = [ISO2DiskWriter]::new($im.get_drive_letter(),$dc.get_drive_letter())
 
+        $i2dw.write_data('C:\Windows\Logs\ImageWriterEngine.log')
 
-$SOURCEEFIFILE = (Get-ChildItem -Path ('{0}:\EFI\Boot' -f $im.ImageObject.DriveLetter) -Filter 'bootx64.efi' -Recurse).FullName
-$DESTINATIONEFIFILE = Join-Path -Path $pap.MountPath -ChildPath '\EFI\Boot'
+        do {
+                Write-Host "." -NoNewline ; Start-Sleep -Seconds 5
+        }while (-not ((Get-Job -Name "ImageCopy").State -eq "Completed"))
 
-$f2pw = [EFIFile2PartitionWriter]::new($SOURCEEFIFILE, $DESTINATIONEFIFILE)
-$f2pw.write_data()
+        # Mount the system partition to copy the EFI file
+        $pap = [PartitionAccessPath]::new($dc,'C:\tmp\mnt')
+        $pap.mount()
 
-# BOOTLOADER PART
-$s = [Store]::new('C:\tmp\BCD')
-$s.create()
+        $SOURCEEFIFILE = (Get-ChildItem -Path ('{0}:\EFI\Boot' -f $im.ImageObject.DriveLetter) -Filter 'bootx64.efi' -Recurse).FullName
+        $DESTINATIONEFIFILE = Join-Path -Path $pap.MountPath -ChildPath '\EFI\Boot'
 
-$bm = [BootManager]::new($s,"{bootmgr}","ImageWriterBootManager")
-$bm.create()
+        $f2pw = [EFIFile2PartitionWriter]::new($SOURCEEFIFILE, $DESTINATIONEFIFILE)
+        $f2pw.write_data()
 
-$bl = [BootLoader]::new($s,'ImageWriterEngineLoader')
-$bl.create()
+        # Generate custom bootmanager, bootloader, and ramdisk.
+        $s = [Store]::new('C:\tmp\BCD')
+        $s.create()
 
-$rm = [RAMDisk]::new($s)
-$rm.create()
-$rm.set($dc.get_drive_letter())
+        $bm = [BootManager]::new($s,"{bootmgr}","ImageWriterBootManager")
+        $bm.create()
 
-$bl.set_default()
-$bl.set_displayorder()
-$bl.set_device($dc.get_drive_letter())
-$bl.set_path()
-$bl.set_description()
-$bl.set_osdevice($dc.get_drive_letter())
-$bl.set_systemroot()
-$bl.set_bootmenupolicy()
-$bl.set_detecthal()
-$bl.set_winpe()
-$bl.set_ems()
+        $bl = [BootLoader]::new($s,'ImageWriterEngineLoader')
+        $bl.create()
 
-$STOREPATH = Join-Path -Path $pap.MountPath -ChildPath 'EFI\Microsoft\Boot\'
-$s2pw = [Store2PartitionWriter]::new($s.Path,$STOREPATH)
-$s2pw.write_data()
+        $rm = [RAMDisk]::new($s)
+        $rm.create()
+        $rm.set($dc.get_drive_letter())
 
-$pap.unmount()
-$im.unmount()
+        $bl.set_default()
+        $bl.set_displayorder()
+        $bl.set_device($dc.get_drive_letter())
+        $bl.set_path()
+        $bl.set_description()
+        $bl.set_osdevice($dc.get_drive_letter())
+        $bl.set_systemroot()
+        $bl.set_bootmenupolicy()
+        $bl.set_detecthal()
+        $bl.set_winpe()
+        $bl.set_ems()
+
+        $STOREPATH = Join-Path -Path $pap.MountPath -ChildPath 'EFI\Microsoft\Boot\'
+        $s2pw = [Store2PartitionWriter]::new($s.Path,$STOREPATH)
+        $s2pw.write_data()
+
+        $pap.unmount()
+        $im.unmount()
+}
