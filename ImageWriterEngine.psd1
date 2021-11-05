@@ -25,13 +25,11 @@
 	
 	# Nested modules
 	NestedModules     = @(
-		@{ModuleName = ".\lib\psframework\PSFramework\PSFramework.psd1"; ModuleVersion = "1.1.59" }
 	)
 
 	# Modules that must be imported into the global environment prior to importing
 	# this module
 	RequiredModules   = @(
-	#@{ModuleName = "PSFramework";ModuleVersion = "1.1.59" }	
 	)
 
 	# Assemblies that must be loaded prior to importing this module
@@ -45,23 +43,25 @@
 	
 	# Functions to export from this module
 	FunctionsToExport = @(
-		'Start-ImageWriterEngine',
+		"Add-IWEFIFile",
 		"Compare-IWImage",
+		'Copy-IWImage'
+		"Dismount-IWImage",
 		"Get-IWDevice",
+		"Get-IWConfig",
+		"Get-IWProgress",
+		"Get-IWDevicePartitions",
 		"Mount-IWImage",
+		'New-IWNotification'
+		"Reset-IWDevice",
 		"Set-IWHardwareDetection",
 		"Set-IWPartition",
 		"Set-IWPartitionType",
 		"Start-IWImageTransfer",
 		"Start-IWPrepareDevice",
-		"Get-IWDevicePartitions",
-		"Get-IWProgress",
-		"Add-IWEFIFile",
-		"Dismount-IWImage",
-		'Copy-IWImage'
-		'New-IWNotification'
-		# Boot
+		'Start-ImageWriterEngine',
 
+		# Boot
 		"Add-IWBootloader",
 		"Add-IWRamdisk",
 		"Dismount-IWEFIPartition",
@@ -70,11 +70,17 @@
 		"Set-IWBootLoader",
 		"Initialize-IWBootConfigurationData",
 		"Get-IWBootConfigurationData",
-		"Remove-IWBootConfigurationData"
+		"Remove-IWBootConfigurationData",
+
+		# Validation
+		'Test-DriveLetter',
+		'ValidatePath'
 	)
 	
 	# Cmdlets to export from this module
-	CmdletsToExport   = ''
+	CmdletsToExport   = @(
+	
+	)
 	
 	# Variables to export from this module
 	VariablesToExport = ''
@@ -83,7 +89,7 @@
 	AliasesToExport   = ''
 	
 	# List of all modules packaged with this module
-	ModuleList        = @(".\lib\psframework\PSFramework\PSFramework.psm1")
+	ModuleList        = @()
 	
 	# List of all files packaged with this module
 	FileList          = @()

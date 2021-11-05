@@ -24,6 +24,6 @@ function Set-IWHardwareDetection {
     }
 
     end {
-        Write-PSFMessage -Level Verbose -Message $("Service {0}" -f $message.Status) -Tag HardwareDetection
+        # Add logging
     }
 }
