@@ -43,3 +43,7 @@ Start-ImageWriterEngine -DiskNumber 1 -ImagePath 'E:\MyISOs\MyWinPE.iso'
 ```
 
 Press return to start the installaton.
+
+# Troubleshoot
+
+If you have problems a good idea to implement contact me at JohnKischel@gmail.com or on github.
