@@ -1,7 +1,7 @@
 ####################################################
 # DeviceFactory Classes
 ####################################################
-
+#region DeviceFactory
 class DeviceFactory {
 
     [DeviceCollector] $Device
@@ -46,11 +46,12 @@ class DeviceFactory {
     }
 
 }
+#endregion
 
 ####################################################
 # DeviceCollector Classes
 ####################################################
-
+#region DeviceCollector
 class DeviceCollector{
     [Object] $VolumeObject
 
@@ -61,15 +62,23 @@ class DeviceCollector{
         return $false
     }
 
+    [string] get_drive_letter(){
+        return ($this.VolumeObject | Get-Partition | Where-Object{ $_.Type -eq 'Basic'} ).DriveLetter
+    }
+
+    [object] get_partition(){
+        return $this.VolumeObject |Get-Partition
+    }
+
+    [object] get_partitionByType($type){
+        $partitions = $this.VolumeObject |Get-Partition
+        return ($partitions | Where-Object{$_.Type -eq $type} | Select-Object PartitionNumber, DiskNumber)
+    }
 }
 
 class DeviceCollectorByDriveLetter:DeviceCollector{
     DeviceCollectorByDriveLetter($DriveLetter){
         $this.VolumeObject = Get-Volume -DriveLetter $DriveLetter | Get-Partition | Get-Disk
-    }
-
-    [object] get_partition(){
-        return $this.VolumeObject |Get-Partition
     }
 }
 
@@ -77,26 +86,22 @@ class DeviceCollectorByDiskNumber:DeviceCollector{
     DeviceCollectorByDiskNumber($DiskNumber){
         $this.VolumeObject = Get-Disk -Number $DiskNumber -ErrorAction 0
     }
-
-    [object] get_partition(){
-        return $this.VolumeObject |Get-Partition
-    }
 }
-
+#endregion
 
 ####################################################
 # Partition Classes
 ####################################################
-
+#region Partition
 class Partition{
+
     $Size
 
     create_partition(){}
+    [string] get_drive_letter(){
+        return $this.DriveLetter
+    }
 }
-
-#New-Partition -InputObject $InputObject -Size 128MB -GptType $Script:IWConfig.partitiontype.msr -IsActive:$false -IsHidden -ErrorAction Stop | Out-Null
-#New-Partition -InputObject $InputObject -Size 100MB -GptType $Script:IWConfig.partitiontype.efi -IsActive:$false -IsHidden -ErrorAction Stop |`
-
 
 class WindowsPartition:Partition{
 
@@ -171,17 +176,145 @@ class MSRPartition:Partition{
     }
 
 }
+#endregion
 
+####################################################
+# IMountProcessor
+####################################################
+#region IMountProcessor
+class IMountProcessor{
+    unmount(){}
+    mount(){}
+}
 
-[DeviceCollectorByDriveLetter]::new('E').get_partition()
-[DeviceCollectorByDiskNumber]::new(1).get_partition()
-$dc = [DeviceCollectorByDiskNumber]::new(1)
-$dc.get_partition()
+class ISOImage:IMountProcessor{
 
-$wp = [WindowsPartition]::new('E',50GB)
-$ep = [EfiPartition]::new()
-$mp = [MSRPartition]::new()
-$parts = $wp,$ep,$mp
-$df = [DeviceFactory]::new($dc,$parts)
-#$df.clear_device()
-#$df.create_partition()
+    $ImagePath
+    $ImageObject
+
+    ISOImage($ImagePath){
+        $this.ImagePath = $ImagePath
+    }
+
+    mount(){
+        $this.unmount()
+        $this.ImageObject = Get-DiskImage $this.ImagePath | Mount-DiskImage -PassThru | Get-Volume
+    }
+
+    unmount(){
+        Dismount-DiskImage -ImagePath  $this.ImagePath | Out-Null
+        $this.ImageObject = $null
+    }
+
+    [string] get_drive_letter(){
+        return $this.ImageObject.DriveLetter
+    }
+}
+
+class PartitionAccessPath:IMountProcessor{
+
+    $Device
+    $MountPath
+    $PartitionType = "System"
+
+    PartitionAccessPath([DeviceCollector]$Device,$MountPath,$PartitionType){
+        $this.Device = $Device
+        $this.MountPath = $MountPath
+        $this.PartitionType = $PartitionType
+    }
+
+    PartitionAccessPath([DeviceCollector]$Device,$MountPath){
+        $this.Device = $Device
+        $this.MountPath = $MountPath
+    }
+
+    mount(){
+        $Partition = $this.Device.get_partitionByType(($this.PartitionType))
+        $DiskNumber= $Partition.DiskNumber
+        $PartitionNumber = $Partition.PartitionNumber
+        Add-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $this.MountPath -PassThru -ErrorAction 0
+    }
+
+    unmount(){
+        $Partition = $this.Device.get_partitionByType(($this.PartitionType))
+        $DiskNumber= $Partition.DiskNumber
+        $PartitionNumber = $Partition.PartitionNumber
+        Remove-PartitionAccessPath -DiskNumber $DiskNumber -PartitionNumber $PartitionNumber -AccessPath $this.MountPath -PassThru | Out-Null
+    }
+
+}
+
+#endregion
+
+####################################################
+# DataWriter
+####################################################
+#region DataWriter
+class DataWriter{
+    write_data(){}
+}
+
+class ISO2DiskWriter:DataWriter {
+
+    $SourceDriveLetter
+    $TargetDriveLetter
+
+    ISO2DiskWriter($SourceDriveLetter, $TargetDriveLetter){
+        $this.SourceDriveLetter = $SourceDriveLetter
+        $this.TargetDriveLetter = $TargetDriveLetter
+    }
+
+    write_data($LogFile){
+        $job = Get-Job -Name ImageCopy -ErrorAction 0
+        if($job){$job |Remove-Job}
+
+        Start-Job -ScriptBlock {
+            param($SourceDriveLetter, $LogFile, $TargetDriveLetter)
+            Robocopy.exe $("{0}:\" -f $SourceDriveLetter) $("{0}:\" -f $TargetDriveLetter) /S /E /MIR /W:1 /R:2 /NP /LOG:$LogFile
+        } -ArgumentList $this.SourceDriveLetter, $LogFile, $this.TargetDriveLetter -Name ImageCopy
+    }
+}
+
+class EFIFile2PartitionWriter:DataWriter {
+
+    # "\EFI\Boot" 'Location of the BCD Store'
+    # "EFI\Microsoft\Boot" 'EFIFile destinationpath'
+
+    $FilePath
+    $Destination
+
+    EFIFile2PartitionWriter($FilePath,$Destination){
+        $this.FilePath = $FilePath
+        $this.Destination = $Destination
+    }
+
+    write_data(){
+        [System.IO.Directory]::CreateDirectory($this.Destination)
+        Copy-Item -Path $this.FilePath -Destination $this.Destination -Force -Verbose
+    }
+
+    delete_partition(){
+        Remove-Item -Force -Path $this.Destination -Verbose -Confirm:$false -Recurse
+    }
+}
+
+class Store2PartitionWriter:DataWriter {
+
+    # "\EFI\Boot" 'Location of the BCD Store'
+    # "EFI\Microsoft\Boot" 'EFIFile destinationpath'
+
+    $FilePath
+    $Destination
+
+    Store2PartitionWriter($FilePath,$Destination){
+        $this.FilePath = $FilePath
+        $this.Destination = $Destination
+    }
+
+    write_data(){
+        [System.IO.Directory]::CreateDirectory($this.Destination)
+        Copy-Item -Path $this.FilePath -Destination $this.Destination -Verbose
+    }
+}
+#endregion
+
