@@ -3,10 +3,19 @@
 
 The **ImageWriterEngine** enables you to make your usbdevice bootable with your selected **WinPE-ISO** from the commandline.
 
-# Where to download?
+# Where to download? How to Install
 
-- > ```git clone https://github.com/JohnKischel/ImageWriterEngine.git```
+## Download
+```git clone https://github.com/JohnKischel/ImageWriterEngine.git```
 
+## Install
+After cloning the repository. Copy the whole ImageWriterEngine Folder to one of powershells module pathes.
+
+You can get a list of valid pathes with:
+```powershell
+$ENV:PSModulePath
+```
+Extended information needed? [About_PSModulePath](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_psmodulepath?view=powershell-5.1)
 ## How to use.
 ---
 ```diff
@@ -14,6 +23,11 @@ Note:
 - Administrator privileges are required for all following steps.
 ```
 Click Start, type PowerShell, right-click Windows PowerShell, and then click Run as administrator.
+
+Extended information needed? [About_PSModulePath](
+https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/starting-windows-powershell?view=powershell-5.1)
+
+---
 
 There are two steps to pre execute:
 
@@ -46,4 +60,4 @@ Press return to start the installaton.
 
 # Troubleshoot
 
-If you have problems a good idea to implement contact me at JohnKischel@gmail.com or on github.
+If you have problems a good idea to implement contact me at johnkischel@gmail.com or on github.
