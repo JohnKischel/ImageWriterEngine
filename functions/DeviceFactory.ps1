@@ -296,7 +296,7 @@ class EFIFile2PartitionWriter:DataWriter {
 
     write_data(){
         [System.IO.Directory]::CreateDirectory($this.Destination)
-        Copy-Item -Path $this.FilePath -Destination $this.Destination -Force -Verbose
+        Copy-Item -Path $this.FilePath -Destination $this.Destination -Force
     }
 
     delete_partition(){

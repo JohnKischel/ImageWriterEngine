@@ -16,6 +16,7 @@ function Start-ImageWriterEngine
 
         begin{
 
+                Set-IWHardwareDetection -Stop
                 # Get the selected device
                 switch($PsCmdlet.ParameterSetName){
                         'DiskNumber' {$dc = [DeviceCollectorByDiskNumber]::new($DiskNumber)}
@@ -93,5 +94,6 @@ function Start-ImageWriterEngine
         end {
                 $pap.unmount()
                 $im.unmount()
+                Set-IWHardwareDetection -Start
         }
 }
