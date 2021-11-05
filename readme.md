@@ -24,7 +24,7 @@ Note:
 ```
 Click Start, type PowerShell, right-click Windows PowerShell, and then click Run as administrator.
 
-Extended information needed? [About_PSModulePath](
+Extended information needed? [Starting Windows Powershell](
 https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/starting-windows-powershell?view=powershell-5.1)
 
 ---
